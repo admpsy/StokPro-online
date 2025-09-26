@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Estoque Online</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts: Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            overflow-x: hidden;
+        }
+        
+        /* Layout Principal */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary-color);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background-color: var(--primary-color);
+            text-align: center;
+        }
+        
+        .sidebar-header h2 {
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-menu li a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding-left: 25px;
+        }
+        
+        .sidebar-menu li a.active {
+            background-color: var(--primary-color);
+        }
+        
+        .sidebar-menu li a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Conteúdo Principal */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            transition: all 0.3s;
+        }
+        
+        .header {
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-title h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .breadcrumb {
+            margin: 5px 0 0 0;
+            padding: 0;
+            background: transparent;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .content-area {
+            padding: 30px;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            padding: 15px 20px;
+            font-weight: 500;
+        }
+        
+        /* Tabelas */
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+        }
+        
+        .table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .badge-em-estoque {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .badge-vencimento-proximo {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .badge-fora-estoque {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        /* Formulários */
+        .form-label {
+            font-weight: 500;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+            border-color: var(--primary-color);
+        }
+        
+        /* Botões */
+        .btn {
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+        }
+        
+        /* Linhas expansíveis */
+        .expanded-row {
+            background-color: #f8f9fa !important;
+        }
+        
+        .sub-row {
+            background-color: #f1f3f4;
+        }
+        
+        .sub-row td {
+            padding-left: 50px !important;
+            border-top: none;
+        }
+        
+        /* Modal de Login */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .login-info {
+            background-color: #e7f3ff;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        /* Status Online/Offline */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-online {
+            background-color: var(--success-color);
+        }
+        
+        .status-offline {
+            background-color: var(--danger-color);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                overflow: visible;
+            }
+            
+            .sidebar-header h2 {
+                display: none;
+            }
+            
+            .sidebar-menu li a span {
+                display: none;
+            }
+            
+            .sidebar-menu li a i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .header-title h1 {
+                font-size: 1.2rem;
+            }
+            
+            .breadcrumb {
+                display: none;
+            }
+            
+            .user-name {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .content-area {
+                padding: 15px;
+            }
+        }
+        
+        /* Animações */
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Utilitários */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-20 {
+            margin-top: 20px;
+        }
+        
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+        
+        .p-20 {
+            padding: 20px;
+        }
+        
+        .cursor-pointer {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de Login -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-container">
+            <div class="login-logo">
+                <h2><i class="fas fa-boxes"></i> EstoquePro Online</h2>
+                <p>Sistema de Controle de Estoque</p>
+                <div class="mt-2">
+                    <span class="status-indicator status-online"></span>
+                    <small id="loginStatus">Sistema Online</small>
+                </div>
+            </div>
+            
+            <div class="login-info">
+                <strong><i class="fas fa-info-circle"></i> Credenciais de Acesso:</strong><br>
+                <strong>Administrador:</strong> admin / admin123<br>
+                <strong>Usuário Demo:</strong> demo / demo123
+            </div>
+            
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="loginUsername" class="form-label">Usuário</label>
+                    <input type="text" class="form-control" id="loginUsername" required value="admin">
+                </div>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="loginPassword" required value="admin123">
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Acessar Sistema
+                    </button>
+                </div>
+            </form>
+            <div class="mt-3 text-center">
+                <small>Use as credenciais acima para teste</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layout Principal (inicialmente oculto) -->
+    <div class="app-container hidden" id="appContainer">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-boxes"></i> <span id="systemNameTitle">EstoquePro</span></h2>
+                <small class="text-white" id="onlineStatus"><span class="status-indicator status-online"></span> Online</small>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-page="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" data-page="cadastro-produtos"><i class="fas fa-plus-circle"></i> <span>Cadastro de Produtos</span></a></li>
+                <li><a href="#" data-page="estoque"><i class="fas fa-warehouse"></i> <span>Estoque</span></a></li>
+                <li><a href="#" data-page="movimentacao-paletes"><i class="fas fa-pallet"></i> <span>Movimentação de Paletes</span></a></li>
+                <li><a href="#" data-page="relatorios"><i class="fas fa-chart-bar"></i> <span>Relatórios</span></a></li>
+                <li><a href="#" data-page="configuracoes"><i class="fas fa-cog"></i> <span>Configurações</span></a></li>
+            </ul>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="header-title">
+                        <h1 id="pageTitle">Dashboard</h1>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page" id="breadcrumbCurrent">Dashboard</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <span id="userInitial">A</span>
+                    </div>
+                    <span class="user-name" id="userName">Administrador</span>
+                    <button class="btn btn-sm btn-outline-secondary ms-3" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </div>
+
+            <!-- Área de Conteúdo -->
+            <div class="content-area">
+                <!-- Página: Dashboard -->
+                <div id="dashboardPage" class="page-content">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 id="totalProdutos">0</h3>
+                                    <p class="text-muted">Produtos Cadastrados</p>
+                                    <i class="fas fa-box fa-2x text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 id="totalEstoque">0</h3>
+                                    <p class="text-muted">Itens em Estoque</p>
+                                    <i class="fas fa-warehouse fa-2x text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 id="totalPaletes">0</h3>
+                                    <p class="text-muted">Paletes Movimentados</p>
+                                    <i class="fas fa-pallet fa-2x text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 id="produtosVencidos">0</h3>
+                                    <p class="text-muted">Produtos Vencidos</p>
+                                    <i class="fas fa-times-circle fa-2x text-danger"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Movimentações de Paletes</h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary active" id="filterDiario">Diário</button>
+                                        <button class="btn btn-sm btn-outline-secondary" id="filterMensal">Mensal</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Data</th>
+                                                    <th>Tipo Produto</th>
+                                                    <th>Tipo Movimento</th>
+                                                    <th>Quantidade</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="paletesTable">
+                                                <!-- Dados serão preenchidos via JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Resumo de Paletes por Tipo</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="paletesChart" width="300" height="300"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Página: Cadastro de Produtos -->
+                <div id="cadastro-produtosPage" class="page-content hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Cadastro de Produtos</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="productForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="productSku" class="form-label">SKU *</label>
+                                            <input type="text" class="form-control" id="productSku" required 
+                                                   placeholder="Será gerado automaticamente" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="productName" class="form-label">Descrição do Produto *</label>
+                                            <input type="text" class="form-control" id="productName" 
+                                                   list="productSuggestions" required 
+                                                   placeholder="Digite para buscar ou adicionar novo">
+                                            <datalist id="productSuggestions">
+                                                <!-- Opções serão preenchidas via JavaScript -->
+                                            </datalist>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="productType" class="form-label">Tipo de Produto *</label>
+                                            <select class="form-select" id="productType" required>
+                                                <option value="">Selecione o tipo</option>
+                                                <option value="Fracionado">Fracionado</option>
+                                                <option value="Tambor">Tambor</option>
+                                                <option value="IBC 1000L">IBC 1000L</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="productQuantity" class="form-label">Quantidade *</label>
+                                            <input type="number" class="form-control" id="productQuantity" min="1" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="productLot" class="form-label">Lote *</label>
+                                            <select class="form-select" id="productLot" required>
+                                                <option value="">Selecione um lote</option>
+                                                <!-- Opções serão preenchidas via JavaScript -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="manufacturingDate" class="form-label">Data de Fabricação *</label>
+                                            <input type="date" class="form-control" id="manufacturingDate" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex gap-2 mt-3">
+                                    <button type="button" class="btn btn-success" id="addProductBtn">
+                                        <i class="fas fa-plus"></i> Adicionar à Lista
+                                    </button>
+                                    <button type="button" class="btn btn-primary" id="saveProductsBtn">
+                                        <i class="fas fa-save"></i> Salvar Produtos
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="clearFormBtn">
+                                        <i class="fas fa-broom"></i> Limpar
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div class="mt-4">
+                                <h6>Produtos para Cadastro</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>SKU</th>
+                                                <th>Produto</th>
+                                                <th>Tipo</th>
+                                                <th>Quantidade</th>
+                                                <th>Lote</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="productsToAddTable">
+                                            <!-- Produtos adicionados aparecerão aqui -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Página: Estoque -->
+                <div id="estoquePage" class="page-content hidden">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Estoque de Produtos</h5>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control" id="searchProduct" placeholder="Buscar produto...">
+                                <button class="btn btn-primary" id="newProductBtn">
+                                    <i class="fas fa-plus"></i> Novo Produto
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th width="50"></th>
+                                            <th>SKU</th>
+                                            <th>Produto</th>
+                                            <th>Tipo</th>
+                                            <th>Quantidade</th>
+                                            <th>Lote</th>
+                                            <th>Fabricação</th>
+                                            <th>Validade</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stockTable">
+                                        <!-- Dados serão preenchidos via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Página: Movimentação de Paletes -->
+                <div id="movimentacao-paletesPage" class="page-content hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Movimentação de Paletes</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="paleteForm">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="paleteDate" class="form-label">Data *</label>
+                                            <input type="date" class="form-control" id="paleteDate" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="paleteQuantity" class="form-label">Quantidade *</label>
+                                            <input type="number" class="form-control" id="paleteQuantity" min="1" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="paleteProductType" class="form-label">Tipo de Produto *</label>
+                                            <select class="form-select" id="paleteProductType" required>
+                                                <option value="">Selecione o tipo</option>
+                                                <option value="Fracionado">Fracionado</option>
+                                                <option value="Tambor">Tambor</option>
+                                                <option value="IBC 1000L">IBC 1000L</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mb-3">
+                                            <label for="paleteMovementType" class="form-label">Tipo de Movimento *</label>
+                                            <select class="form-select" id="paleteMovementType" required>
+                                                <option value="">Selecione o tipo</option>
+                                                <option value="Entrada">Entrada</option>
+                                                <option value="Saída">Saída</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Registrar Movimentação
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="clearPaleteFormBtn">
+                                        <i class="fas fa-broom"></i> Limpar
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div class="mt-4">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Quantidade</th>
+                                                <th>Tipo Produto</th>
+                                                <th>Tipo Movimento</th>
+                                                <th>Usuário</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="paletesMovementsTable">
+                                            <!-- Dados serão preenchidos via JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Página: Relatórios -->
+                <div id="relatoriosPage" class="page-content hidden">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Relatórios do Sistema</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success" id="exportExcelBtn">
+                                    <i class="fas fa-file-excel"></i> Exportar Excel
+                                </button>
+                                <button class="btn btn-danger" id="exportPdfBtn">
+                                    <i class="fas fa-file-pdf"></i> Gerar PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th width="50"></th>
+                                            <th>Nº Relatório</th>
+                                            <th>Data</th>
+                                            <th>Tipo</th>
+                                            <th>Produtos Movimentados</th>
+                                            <th>Paletes Movimentados</th>
+                                            <th>Usuário</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reportsTable">
+                                        <!-- Dados serão preenchidos via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Página: Configurações -->
+                <div id="configuracoesPage" class="page-content hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Configurações do Sistema</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Gerenciar Usuários</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="userNameInput" class="form-label">Nome do Usuário</label>
+                                                <input type="text" class="form-control" id="userNameInput" placeholder="Digite o nome do usuário">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="userEmail" class="form-label">E-mail</label>
+                                                <input type="email" class="form-control" id="userEmail" placeholder="Digite o e-mail">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="userPassword" class="form-label">Senha</label>
+                                                <input type="password" class="form-control" id="userPassword" placeholder="Digite a senha">
+                                            </div>
+                                            <button class="btn btn-success" id="addUserBtn">
+                                                <i class="fas fa-user-plus"></i> Adicionar Usuário
+                                            </button>
+                                            
+                                            <hr>
+                                            
+                                            <h6>Usuários Cadastrados</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nome</th>
+                                                            <th>E-mail</th>
+                                                            <th>Status</th>
+                                                            <th>Ações</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="usersTable">
+                                                        <!-- Dados serão preenchidos via JavaScript -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Configurações do Sistema</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="systemName" class="form-label">Nome do Sistema</label>
+                                                <input type="text" class="form-control" id="systemName" value="EstoquePro Online">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="apiUrl" class="form-label">URL da API</label>
+                                                <input type="text" class="form-control" id="apiUrl" placeholder="https://api.estoquepro.com">
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="onlineMode">
+                                                <label class="form-check-label" for="onlineMode">Modo Online</label>
+                                            </div>
+                                            <button class="btn btn-primary" id="saveSettingsBtn">
+                                                <i class="fas fa-save"></i> Salvar Configurações
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card mt-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Sincronização de Dados</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Sincronize os dados com o servidor online.</p>
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-success" id="syncDataBtn">
+                                                    <i class="fas fa-sync-alt"></i> Sincronizar Agora
+                                                </button>
+                                                <button class="btn btn-warning" id="exportDataBtn">
+                                                    <i class="fas fa-download"></i> Exportar Dados
+                                                </button>
+                                            </div>
+                                            <div class="mt-3" id="syncStatus">
+                                                <!-- Status da sincronização -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- SheetJS (para exportar Excel) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        // =============================================
+        // SISTEMA DE ESTOQUE ONLINE - CREDENCIAIS CORRIGIDAS
+        // =============================================
+
+      // Configurações do sistema
+const SYSTEM_CONFIG = {
+    apiUrl: 'https://api.estoquepro.com',
+    syncInterval: 30000,
+    reportNumber: 1
+};
+
+// Dados iniciais do sistema com usuários padrão
+let systemData = {
+    products: JSON.parse(localStorage.getItem('estoqueProProducts')) || [],
+    paletes: JSON.parse(localStorage.getItem('estoqueProPaletes')) || [],
+    reports: JSON.parse(localStorage.getItem('estoqueProReports')) || [],
+    users: JSON.parse(localStorage.getItem('estoqueProUsers')) || [
+        { 
+            id: 1, 
+            name: 'Administrador', 
+            email: 'admin@estoque.com', 
+            password: 'admin123', 
+            active: true,
+            role: 'admin'
+        },
+        { 
+            id: 2, 
+            name: 'Usuário Demo', 
+            email: 'demo@estoque.com', 
+            password: 'demo123', 
+            active: true,
+            role: 'user'
+        }
+    ],
+    settings: JSON.parse(localStorage.getItem('estoqueProSettings')) || {
+        systemName: 'EstoquePro Online',
+        onlineMode: true,
+        apiUrl: SYSTEM_CONFIG.apiUrl
+    },
+    productsToAdd: []
+};
+
+// Estado da aplicação
+let currentUser = null;
+let isOnline = true;
+let expandedRows = new Set();
+
+// =============================================
+// INICIALIZAÇÃO CORRIGIDA - SEM LOOP
+// =============================================
+
+function initializeSystem() {
+    console.log('Inicializando sistema...');
+    
+    // Verificar se há usuário logado de forma segura
+    try {
+        const loggedInUser = localStorage.getItem('estoqueProCurrentUser');
+        if (loggedInUser && loggedInUser !== 'null' && loggedInUser !== 'undefined') {
+            currentUser = JSON.parse(loggedInUser);
+            console.log('Usuário logado encontrado:', currentUser.name);
+            showApp();
+        } else {
+            console.log('Nenhum usuário logado, mostrando tela de login');
+            showLogin();
+        }
+    } catch (error) {
+        console.error('Erro ao verificar login:', error);
+        showLogin();
+    }
+
+    // Carregar configurações
+    loadSettings();
+    
+    // Iniciar dados de exemplo apenas se necessário
+    if (systemData.products.length === 0) {
+        initializeSampleData();
+    }
+}
+
+function initializeSampleData() {
+    console.log('Inicializando dados de exemplo...');
+    
+    // Adicionar alguns produtos de exemplo se não houver dados
+    if (systemData.products.length === 0) {
+        systemData.products = [
+            {
+                sku: '1001',
+                name: 'Produto A - Fracionado',
+                type: 'Fracionado',
+                quantity: 150,
+                lot: 'LOTE001',
+                manufacturingDate: '2024-01-15',
+                expirationDate: '2028-01-15',
+                addedBy: 'Sistema',
+                addedAt: new Date().toISOString()
+            },
+            {
+                sku: '1002',
+                name: 'Produto B - Tambor',
+                type: 'Tambor',
+                quantity: 50,
+                lot: 'LOTE002',
+                manufacturingDate: '2024-02-20',
+                expirationDate: '2028-02-20',
+                addedBy: 'Sistema',
+                addedAt: new Date().toISOString()
+            },
+            {
+                sku: '1003',
+                name: 'Produto C - IBC 1000L',
+                type: 'IBC 1000L',
+                quantity: 25,
+                lot: 'LOTE003',
+                manufacturingDate: '2024-03-10',
+                expirationDate: '2028-03-10',
+                addedBy: 'Sistema',
+                addedAt: new Date().toISOString()
+            }
+        ];
+        saveData();
+    }
+
+    // Adicionar algumas movimentações de paletes de exemplo
+    if (systemData.paletes.length === 0) {
+        const today = new Date().toISOString().split('T')[0];
+        systemData.paletes = [
+            {
+                id: 1,
+                date: today,
+                quantity: 10,
+                productType: 'Fracionado',
+                movementType: 'Entrada',
+                user: 'Sistema'
+            },
+            {
+                id: 2,
+                date: today,
+                quantity: 5,
+                productType: 'Tambor',
+                movementType: 'Saída',
+                user: 'Sistema'
+            }
+        ];
+        saveData();
+    }
+}
+
+// =============================================
+// EVENT LISTENERS E SETUP
+// =============================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM carregado, iniciando sistema...');
+    
+    // Inicializar o sistema apenas uma vez
+    initializeSystem();
+    setupEventListeners();
+    checkOnlineStatus();
+});
+
+function setupEventListeners() {
+    console.log('Configurando event listeners...');
+    
+    // Login
+    loginForm.addEventListener('submit', handleLogin);
+    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
+    // Navegação
+    setupNavigation();
+
+    // Cadastro de Produtos
+    setupProductRegistration();
+
+    // Estoque
+    setupStockManagement();
+
+    // Movimentação de Paletes
+    setupPaleteManagement();
+
+    // Relatórios
+    setupReports();
+
+    // Configurações
+    setupSettings();
+
+    // Menu mobile
+    document.getElementById('mobileMenuToggle').addEventListener('click', toggleMobileMenu);
+}
+
+// =============================================
+// FUNÇÕES DE AUTENTICAÇÃO CORRIGIDAS
+// =============================================
+
+function handleLogin(e) {
+    e.preventDefault();
+    console.log('Tentativa de login...');
+    
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const user = systemData.users.find(u => 
+        (u.email === username || u.name === username) && 
+        u.password === password && 
+        u.active
+    );
+
+    if (user) {
+        console.log('Login bem-sucedido para:', user.name);
+        currentUser = user;
+        localStorage.setItem('estoqueProCurrentUser', JSON.stringify(currentUser));
+        showApp();
+    } else {
+        console.log('Login falhou para:', username);
+        alert('Credenciais inválidas! Use:\nAdministrador: admin / admin123\nDemo: demo / demo123');
+    }
+}
+
+function handleLogout() {
+    console.log('Efetuando logout...');
+    currentUser = null;
+    localStorage.removeItem('estoqueProCurrentUser');
+    showLogin();
+}
+
+function showLogin() {
+    console.log('Mostrando tela de login...');
+    loginModal.classList.remove('hidden');
+    appContainer.classList.add('hidden');
+}
+
+function showApp() {
+    console.log('Mostrando aplicação...');
+    loginModal.classList.add('hidden');
+    appContainer.classList.remove('hidden');
+    updateUserInterface();
+    loadDashboard();
+}
+
+// =============================================
+// FUNÇÃO DE SINCRONIZAÇÃO SEGURA
+// =============================================
+
+function startAutoSync() {
+    console.log('Iniciando sincronização automática...');
+    // Sincronizar apenas se estiver online e no modo online
+    if (isOnline && systemData.settings.onlineMode) {
+        setInterval(() => {
+            syncWithServer();
+        }, SYSTEM_CONFIG.syncInterval);
+    }
+}
+
+// =============================================
+// OUTRAS FUNÇÕES (MANTIDAS IGUAIS)
+// =============================================
+
+function saveData() {
+    try {
+        localStorage.setItem('estoqueProProducts', JSON.stringify(systemData.products));
+        localStorage.setItem('estoqueProPaletes', JSON.stringify(systemData.paletes));
+        localStorage.setItem('estoqueProReports', JSON.stringify(systemData.reports));
+        localStorage.setItem('estoqueProUsers', JSON.stringify(systemData.users));
+        localStorage.setItem('estoqueProSettings', JSON.stringify(systemData.settings));
+        console.log('Dados salvos com sucesso');
+    } catch (error) {
+        console.error('Erro ao salvar dados:', error);
+    }
+}
+
+
+
+      
+        function setupProductRegistration() {
+            const productName = document.getElementById('productName');
+            const productLot = document.getElementById('productLot');
+            const addProductBtn = document.getElementById('addProductBtn');
+            const saveProductsBtn = document.getElementById('saveProductsBtn');
+
+            // Gerar SKU inicial
+            document.getElementById('productSku').value = generateSku();
+
+            // Autocomplete para descrição do produto
+            productName.addEventListener('input', function() {
+                updateProductSuggestions(this.value);
+            });
+
+            // Buscar lotes quando produto for selecionado
+            productName.addEventListener('change', function() {
+                updateLotOptions(this.value);
+            });
+
+            addProductBtn.addEventListener('click', addProductToList);
+            saveProductsBtn.addEventListener('click', saveAllProducts);
+            document.getElementById('clearFormBtn').addEventListener('click', clearProductForm);
+        }
+
+        function updateProductSuggestions(searchTerm) {
+            const suggestions = document.getElementById('productSuggestions');
+            suggestions.innerHTML = '';
+
+            if (searchTerm.length < 2) return;
+
+            const uniqueProducts = [...new Set(systemData.products.map(p => p.name))];
+            const filtered = uniqueProducts.filter(name => 
+                name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            filtered.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product;
+                suggestions.appendChild(option);
+            });
+        }
+
+        function updateLotOptions(productName) {
+            const lotSelect = document.getElementById('productLot');
+            lotSelect.innerHTML = '<option value="">Selecione um lote</option>';
+
+            if (!productName) return;
+
+            const productLots = systemData.products
+                .filter(p => p.name === productName)
+                .map(p => p.lot);
+
+            const uniqueLots = [...new Set(productLots)];
+
+            uniqueLots.forEach(lot => {
+                const option = document.createElement('option');
+                option.value = lot;
+                option.textContent = lot;
+                lotSelect.appendChild(option);
+            });
+
+            // Adicionar opção para novo lote
+            const newOption = document.createElement('option');
+            newOption.value = 'new';
+            newOption.textContent = '+ Adicionar Novo Lote';
+            lotSelect.appendChild(newOption);
+        }
+
+        function generateSku() {
+            if (systemData.products.length === 0) return '1001';
+            const lastSku = Math.max(...systemData.products.map(p => parseInt(p.sku)));
+            return (lastSku + 1).toString();
+        }
+
+        function addProductToList() {
+            const form = document.getElementById('productForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const productData = {
+                sku: document.getElementById('productSku').value,
+                name: document.getElementById('productName').value,
+                type: document.getElementById('productType').value,
+                quantity: parseInt(document.getElementById('productQuantity').value),
+                lot: document.getElementById('productLot').value,
+                manufacturingDate: document.getElementById('manufacturingDate').value,
+                expirationDate: calculateExpirationDate(document.getElementById('manufacturingDate').value),
+                addedBy: currentUser.name,
+                addedAt: new Date().toISOString()
+            };
+
+            systemData.productsToAdd.push(productData);
+            updateProductsToAddTable();
+            
+            // Gerar novo SKU para o próximo produto
+            document.getElementById('productSku').value = generateSku();
+            clearProductForm(false); // Não limpar SKU
+        }
+
+        function saveAllProducts() {
+            if (systemData.productsToAdd.length === 0) {
+                alert('Nenhum produto para salvar!');
+                return;
+            }
+
+            systemData.products.push(...systemData.productsToAdd);
+            systemData.productsToAdd = [];
+
+            saveData();
+            updateProductsToAddTable();
+            alert('Produtos salvos com sucesso!');
+            loadStockTable();
+        }
+
+        function setupStockManagement() {
+            document.getElementById('searchProduct').addEventListener('input', loadStockTable);
+            document.getElementById('newProductBtn').addEventListener('click', () => {
+                document.querySelector('[data-page="cadastro-produtos"]').click();
+            });
+        }
+
+        function loadStockTable() {
+            const tbody = document.getElementById('stockTable');
+            const searchTerm = document.getElementById('searchProduct').value.toLowerCase();
+
+            tbody.innerHTML = '';
+
+            // Agrupar produtos por SKU para mostrar totais
+            const productsBySku = {};
+            systemData.products.forEach(product => {
+                if (!productsBySku[product.sku]) {
+                    productsBySku[product.sku] = [];
+                }
+                productsBySku[product.sku].push(product);
+            });
+
+            Object.keys(productsBySku).forEach((sku, index) => {
+                const products = productsBySku[sku];
+                const mainProduct = products[0];
+                const totalQuantity = products.reduce((sum, p) => sum + p.quantity, 0);
+
+                if (searchTerm && !mainProduct.name.toLowerCase().includes(searchTerm) && 
+                    !mainProduct.sku.toLowerCase().includes(searchTerm)) {
+                    return;
+                }
+
+                const isExpanded = expandedRows.has(index);
+
+                // Linha principal do produto
+                const mainRow = document.createElement('tr');
+                mainRow.innerHTML = `
+                    <td class="cursor-pointer" onclick="toggleRow(${index})">
+                        <i class="fas fa-chevron-${isExpanded ? 'down' : 'right'}"></i>
+                    </td>
+                    <td>${mainProduct.sku}</td>
+                    <td>${mainProduct.name}</td>
+                    <td>${mainProduct.type}</td>
+                    <td><strong>${totalQuantity}</strong></td>
+                    <td>${products.length} lote(s)</td>
+                    <td>${formatDate(mainProduct.manufacturingDate)}</td>
+                    <td>${formatDate(mainProduct.expirationDate)}</td>
+                    <td><span class="badge ${getStatusClass(mainProduct)}">${getProductStatus(mainProduct)}</span></td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary" onclick="editProduct('${mainProduct.sku}')" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline-success" onclick="addNewLot('${mainProduct.sku}')" title="Novo Lote">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="deleteProduct('${mainProduct.sku}')" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(mainRow);
+
+                // Linhas expansíveis para lotes
+                if (isExpanded && products.length > 1) {
+                    products.forEach((product, lotIndex) => {
+                        const subRow = document.createElement('tr');
+                        subRow.className = 'sub-row';
+                        subRow.innerHTML = `
+                            <td colspan="2"></td>
+                            <td><small><i class="fas fa-box"></i> Lote: ${product.lot}</small></td>
+                            <td>${product.type}</td>
+                            <td>${product.quantity}</td>
+                            <td>${formatDate(product.manufacturingDate)}</td>
+                            <td>${formatDate(product.expirationDate)}</td>
+                            <td><span class="badge ${getStatusClass(product)}">${getProductStatus(product)}</span></td>
+                            <td colspan="2">
+                                <button class="btn btn-sm btn-outline-warning" onclick="editLot('${product.sku}', '${product.lot}')">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(subRow);
+                    });
+                }
+            });
+        }
+
+        // ... (restante do código permanece igual)
+
+        // Funções globais para HTML
+        window.toggleRow = function(index) {
+            if (expandedRows.has(index)) {
+                expandedRows.delete(index);
+            } else {
+                expandedRows.add(index);
+            }
+            loadStockTable();
+        };
+
+        window.editProduct = function(sku) {
+            const product = systemData.products.find(p => p.sku === sku);
+            if (product) {
+                alert(`Editando produto: ${product.name}\n\nEsta funcionalidade abriria um modal de edição em uma versão completa.`);
+            }
+        };
+
+        window.addNewLot = function(sku) {
+            const product = systemData.products.find(p => p.sku === sku);
+            if (product) {
+                // Preencher formulário com dados do produto
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productType').value = product.type;
+                document.getElementById('productLot').value = 'new';
+                
+                // Navegar para cadastro de produtos
+                document.querySelector('[data-page="cadastro-produtos"]').click();
+                alert(`Preparado para adicionar novo lote para: ${product.name}`);
+            }
+        };
+
+        window.deleteProduct = function(sku) {
+            if (confirm('Tem certeza que deseja excluir este produto e todos os seus lotes?')) {
+                systemData.products = systemData.products.filter(p => p.sku !== sku);
+                saveData();
+                loadStockTable();
+                alert('Produto excluído com sucesso!');
+            }
+        };
+
+        // ... (restante do código de inicialização e configuração)
+
+    </script>
+</body>
+</html>
