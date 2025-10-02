@@ -22,10 +22,13 @@
             --dark-bg: #1e1e1e;
             --card-bg: #2d2d2d;
             --text-color: #f8f9fa;
-            --text-muted: #e9ecef;
+            --text-muted: #b0b0b0;
             --text-light: #ffffff;
             --border-color: #444;
             --sidebar-width: 280px;
+            --table-header-bg: #343a40;
+            --table-row-hover: rgba(255, 255, 255, 0.08);
+            --table-striped: rgba(255, 255, 255, 0.05);
         }
         
         * {
@@ -41,7 +44,7 @@
             transition: all 0.3s ease;
             overflow-x: hidden;
             line-height: 1.6;
-        }        
+        }
         
         /* Layout com sidebar */
         .app-container {
@@ -199,37 +202,54 @@
             margin-bottom: 8px;
         }
         
-        /* Tabelas */
+        /* Tabelas - MELHORIAS APLICADAS */
         .table {
-            color: var(#16191c);
+            color: var(--text-color);
             border-color: var(--border-color);
             margin-bottom: 0;
-        }
-        
-        .table-dark {
-            background-color: #2d2d2d;
-        }
-        
-        .table-striped>tbody>tr:nth-of-type(odd) {
-            background-color: rgba(255,255,255,0.05);
-        }
-        
-        .table-hover tbody tr:hover {
-            background-color: rgba(255,255,255,0.1);
+            width: 100%;
+            /* Removendo transparência e ajustando espaçamento */
+            background-color: var(--card-bg);
         }
         
         .table th {
-            border-top: none;
-            font-weight: 600;
-            padding: 12px 15px;
+            background-color: var(--table-header-bg);
             color: var(--text-light);
-            background-color: rgba(0,0,0,0.2);
+            font-weight: 600;
+            padding: 10px 12px; /* Diminuído o padding */
+            border-bottom: 2px solid var(--border-color);
+            vertical-align: middle;
         }
         
         .table td {
-            padding: 12px 15px;
+            padding: 10px 12px; /* Diminuído o padding */
             vertical-align: middle;
-            color: var(#16191c);
+            color: var(--text-color);
+            border-top: 1px solid var(--border-color);
+            /* Removendo transparência */
+            background-color: transparent;
+        }
+        
+        .table-striped>tbody>tr:nth-of-type(odd) {
+            background-color: var(--table-striped);
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: var(--table-row-hover);
+        }
+        
+        .table-bordered {
+            border: 1px solid var(--border-color);
+        }
+        
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid var(--border-color);
+        }
+        
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
         }
         
         /* Botões */
@@ -429,7 +449,7 @@
             margin-bottom: 15px;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: Transparent;
+            -webkit-text-fill-color: transparent;
         }
         
         .stat-card h3 {
@@ -597,7 +617,7 @@
         .text-gradient {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: black;
+            -webkit-text-fill-color: transparent;
         }
         
         .shadow-custom {
@@ -809,7 +829,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
-                                <thead class="table-dark">
+                                <thead>
                                     <tr>
                                         <th>Nº Relatório</th>
                                         <th>Data</th>
@@ -908,7 +928,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
-                                <thead class="table-light">
+                                <thead>
                                     <tr>
                                         <th>Data</th>
                                         <th>Movimento</th>
@@ -995,7 +1015,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
-                                <thead class="table-dark">
+                                <thead>
                                     <tr>
                                         <th>SKU</th>
                                         <th>Produto</th>
