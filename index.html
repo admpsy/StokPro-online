@@ -642,6 +642,26 @@
             border: 1px solid #555;
             color: var(--text-muted);
         }
+        
+        /* Estilo para o rodapé de créditos */
+        .credits-footer {
+            background-color: var(--dark-bg);
+            color: var(--text-muted);
+            padding: 15px 0;
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .credits-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .credits-footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -1036,7 +1056,7 @@
                 </div>
             </div>
 
-            <!-- Tela de Movimentação de Paletes -->
+            <!-- Tela de Movimentação de Paletes (ATUALIZADA) -->
             <div id="paletes-page" class="page">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="text-gradient">Movimentação de Paletes</h2>
@@ -1047,6 +1067,27 @@
                         <button id="generate-paletes-excel" class="btn btn-success">
                             <i class="bi bi-file-earmark-spreadsheet me-1"></i>Exportar Excel
                         </button>
+                    </div>
+                </div>
+
+                <!-- NOVO: Filtro de data para o relatório -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Filtros do Relatório</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="paletes-filter-date" class="form-label">Data do Relatório</label>
+                                <input type="date" class="form-control" id="paletes-filter-date">
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="btn-group w-100">
+                                    <button id="apply-paletes-filters" class="btn btn-primary me-2 flex-fill">Filtrar</button>
+                                    <button id="reset-paletes-filters" class="btn btn-outline-secondary flex-fill">Limpar</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1150,6 +1191,14 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- NOVO: Rodapé com créditos -->
+    <div class="credits-footer">
+        <div class="container">
+            <p>Sistema desenvolvido por <strong>[Aldemir Garbino]</strong> com auxílio de IA</p>
+            <p class="mb-0">© 2025 - Todos os direitos reservados</p>
         </div>
     </div>
 
@@ -1350,6 +1399,7 @@
             document.getElementById('input-date').value = today;
             document.getElementById('paletes-date').value = today;
             document.getElementById('stock-filter-date').value = today;
+            document.getElementById('paletes-filter-date').value = today;
             document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-BR');
             
             // Configurar navegação
@@ -1583,6 +1633,16 @@
                 loadProductsData();
             });
             
+            // NOVOS EVENTOS PARA FILTROS DE PALETES
+            document.getElementById('apply-paletes-filters').addEventListener('click', function() {
+                loadPaletesData();
+            });
+            
+            document.getElementById('reset-paletes-filters').addEventListener('click', function() {
+                document.getElementById('paletes-filter-date').value = '';
+                loadPaletesData();
+            });
+            
             // Histórico
             document.getElementById('view-history').addEventListener('click', function() {
                 loadHistoryData();
@@ -1772,8 +1832,9 @@
             });
         }
         
-        // Função para carregar dados de paletes
+        // Função para carregar dados de paletes (ATUALIZADA)
         function loadPaletesData() {
+            const filterDate = document.getElementById('paletes-filter-date').value;
             const paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
             const container = document.getElementById('paletes-report-container');
             
@@ -1784,10 +1845,21 @@
                 return;
             }
             
-            // Ordenar por data (mais recente primeiro)
-            paletesData.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Filtrar por data se fornecida
+            let filteredData = paletesData;
+            if (filterDate) {
+                filteredData = paletesData.filter(report => report.date === filterDate);
+            }
             
-            paletesData.forEach(report => {
+            // Ordenar por data (mais recente primeiro)
+            filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (filteredData.length === 0) {
+                container.innerHTML = '<p class="text-center">Nenhum relatório encontrado para a data selecionada</p>';
+                return;
+            }
+            
+            filteredData.forEach(report => {
                 const reportElement = document.createElement('div');
                 reportElement.className = 'report-line mb-3';
                 
@@ -1808,6 +1880,10 @@
                 movimentacaoTitle.innerHTML = '<strong>🏭 MOVIMENTAÇÃO DE PALETES</strong>';
                 details.appendChild(movimentacaoTitle);
                 
+                // Calcular totais
+                let totalEntradas = 0;
+                let totalSaidas = 0;
+                
                 report.items.forEach(item => {
                     const itemElement = document.createElement('div');
                     itemElement.className = 'report-item';
@@ -1816,7 +1892,23 @@
                         <span>${item.movement === 'Entrada' ? 'Entrada' : 'Saída'}: ${item.quantity} paletes</span>
                     `;
                     details.appendChild(itemElement);
+                    
+                    // Calcular totais
+                    if (item.movement === 'Entrada') {
+                        totalEntradas += item.quantity;
+                    } else {
+                        totalSaidas += item.quantity;
+                    }
                 });
+                
+                // Adicionar linha de totais
+                const totalElement = document.createElement('div');
+                totalElement.className = 'report-item mt-2 pt-2 border-top';
+                totalElement.innerHTML = `
+                    <span><strong>TOTAIS</strong></span>
+                    <span><strong>Entradas: ${totalEntradas} | Saídas: ${totalSaidas}</strong></span>
+                `;
+                details.appendChild(totalElement);
                 
                 // Evento para expandir/recolher
                 header.addEventListener('click', function() {
@@ -1850,7 +1942,7 @@
             
             if (!existingReport) {
                 // Criar novo relatório
-                const reportNumber = getNextReportNumber();
+                const reportNumber = getNextPaletesReportNumber();
                 existingReport = {
                     id: Date.now(),
                     date: date,
@@ -1881,7 +1973,15 @@
             alert('Movimentação de paletes adicionada com sucesso!');
         }
         
-        // Função para gerar PDF de paletes
+        // Função para obter o próximo número de relatório de paletes
+        function getNextPaletesReportNumber() {
+            let reportNumber = parseInt(localStorage.getItem('lastPaletesReportNumber') || '0');
+            reportNumber++;
+            localStorage.setItem('lastPaletesReportNumber', reportNumber.toString());
+            return reportNumber;
+        }
+        
+        // Função para gerar PDF de paletes (ATUALIZADA)
         function generatePaletesPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -1892,8 +1992,14 @@
             doc.setFontSize(12);
             doc.text(`Data de geração: ${new Date().toLocaleDateString('pt-BR')}`, 14, 25);
             
-            // Obter dados
-            const paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
+            // Obter dados com filtro aplicado
+            const filterDate = document.getElementById('paletes-filter-date').value;
+            let paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
+            
+            // Aplicar filtro de data se existir
+            if (filterDate) {
+                paletesData = paletesData.filter(report => report.date === filterDate);
+            }
             
             if (paletesData.length === 0) {
                 doc.text('Nenhum dado de movimentação de paletes encontrado.', 14, 40);
@@ -1929,22 +2035,56 @@
                 doc.text('MOVIMENTAÇÃO DE PALETES', 14, yPosition);
                 yPosition += 7;
                 
+                // Calcular totais
+                let totalEntradas = 0;
+                let totalSaidas = 0;
+                
                 // Detalhes das movimentações
                 report.items.forEach(item => {
                     doc.text(`  ${item.type} - ${item.movement}: ${item.quantity} paletes`, 20, yPosition);
                     yPosition += 6;
+                    
+                    // Calcular totais
+                    if (item.movement === 'Entrada') {
+                        totalEntradas += item.quantity;
+                    } else {
+                        totalSaidas += item.quantity;
+                    }
                 });
                 
-                yPosition += 10;
+                // Adicionar linha de totais
+                yPosition += 5;
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text(`TOTAIS: Entradas: ${totalEntradas} | Saídas: ${totalSaidas}`, 20, yPosition);
+                doc.setFont(undefined, 'normal');
+                
+                yPosition += 15;
             });
+            
+            // Adicionar créditos no final do PDF
+            if (yPosition > 270) {
+                doc.addPage();
+                yPosition = 20;
+            }
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text('Sistema desenvolvido por [Seu Nome] com auxílio de IA', 14, yPosition);
             
             doc.save('relatorio_paletes.pdf');
             alert('PDF de movimentação de paletes gerado com sucesso!');
         }
         
-        // Função para exportar Excel de paletes
+        // Função para exportar Excel de paletes (ATUALIZADA)
         function generatePaletesExcel() {
-            const paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
+            const filterDate = document.getElementById('paletes-filter-date').value;
+            let paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
+            
+            // Aplicar filtro de data se existir
+            if (filterDate) {
+                paletesData = paletesData.filter(report => report.date === filterDate);
+            }
             
             if (paletesData.length === 0) {
                 alert('Nenhum dado de movimentação de paletes encontrado!');
@@ -1972,6 +2112,10 @@
                     ]);
                 });
             });
+            
+            // Adicionar linha de créditos
+            data.push([]);
+            data.push(['Sistema desenvolvido por [Seu Nome] com auxílio de IA']);
             
             // Criar planilha
             const ws = XLSX.utils.aoa_to_sheet(data);
@@ -2013,6 +2157,10 @@
                     status.status
                 ]);
             });
+            
+            // Adicionar linha de créditos
+            data.push([]);
+            data.push(['Sistema desenvolvido por [Seu Nome] com auxílio de IA']);
             
             // Criar planilha
             const ws = XLSX.utils.aoa_to_sheet(data);
@@ -2064,6 +2212,12 @@
                 theme: 'grid'
             });
             
+            // Adicionar créditos no final do PDF
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text('Sistema desenvolvido por [Seu Nome] com auxílio de IA', 14, finalY);
+            
             // Salvar o PDF
             doc.save('relatorio_estoque.pdf');
             alert('Relatório de estoque exportado com sucesso!');
@@ -2096,6 +2250,10 @@
                     formatDate(item.manufacturingDate)
                 ]);
             });
+            
+            // Adicionar linha de créditos
+            data.push([]);
+            data.push(['Sistema desenvolvido por [Seu Nome] com auxílio de IA']);
             
             // Criar planilha
             const ws = XLSX.utils.aoa_to_sheet(data);
@@ -2726,6 +2884,12 @@
                     }
                 });
             }
+            
+            // Adicionar créditos no final do PDF
+            const finalY = doc.lastAutoTable.finalY + 20;
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text('Sistema desenvolvido por [Seu Nome] com auxílio de IA', 14, finalY);
             
             // Salvar o PDF
             const fileName = `relatorio_movimentacao_${reportNumber}_${reportDate}.pdf`;
