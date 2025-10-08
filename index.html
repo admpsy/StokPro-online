@@ -10,11 +10,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <!-- Firebase Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <!-- Firebase Auth -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <style>
         :root {
             --primary-color: #4b6cb7;
@@ -1796,17 +1796,40 @@
             localStorage.setItem('firebaseConfig', JSON.stringify(config));
         }
 
-        function initializeFirebase(config) {
-            try {
-                firebaseApp = firebase.initializeApp(config);
-                db = firebase.firestore();
-                console.log('Firebase inicializado com sucesso');
-                return true;
-            } catch (error) {
-                console.error('Erro ao inicializar Firebase:', error);
-                return false;
-            }
+  function initializeFirebase(config) {
+    try {
+        // Verifica se já existe uma app do Firebase
+        if (firebase.apps.length === 0) {
+            firebaseApp = firebase.initializeApp(config);
+        } else {
+            firebaseApp = firebase.app();
         }
+        
+        db = firebase.firestore();
+        console.log('Firebase inicializado com sucesso');
+        
+        // Testa a conexão
+        testFirebaseConnection();
+        return true;
+    } catch (error) {
+        console.error('Erro ao inicializar Firebase:', error);
+        alert('Erro ao configurar Firebase: ' + error.message);
+        return false;
+    }
+}
+
+// Função para testar a conexão
+async function testFirebaseConnection() {
+    try {
+        await db.collection('test').doc('connection').set({
+            test: true,
+            timestamp: new Date()
+        });
+        console.log('✅ Conexão com Firebase testada com sucesso');
+    } catch (error) {
+        console.error('❌ Erro ao testar conexão Firebase:', error);
+    }
+}
 
         // Funções de armazenamento online
         async function saveDataOnline(collection, data) {
@@ -2018,12 +2041,12 @@
             // Configurações do Firebase
             document.getElementById('save-firebase-config').addEventListener('click', function() {
                 const config = {
-                    apiKey: document.getElementById('firebase-apiKey').value,
-                    authDomain: document.getElementById('firebase-authDomain').value,
-                    projectId: document.getElementById('firebase-projectId').value,
-                    storageBucket: document.getElementById('firebase-storageBucket').value,
-                    messagingSenderId: document.getElementById('firebase-messagingSenderId').value,
-                    appId: document.getElementById('firebase-appId').value
+                    apiKey: document.getElementById('AIzaSyDOy0Ylpkkq9GZQLJmmpfkLwCorptjceV4').value,
+                    authDomain: document.getElementById('controlemovimentacao-cbd0d.firebaseapp.com').value,
+                    projectId: document.getElementById('controlemovimentacao-cbd0d').value,
+                    storageBucket: document.getElementById('controlemovimentacao-cbd0d.firebasestorage.app').value,
+                    messagingSenderId: document.getElementById('607751879879').value,
+                    appId: document.getElementById('1:607751879879:web:061ecce071d004315812e2').value
                 };
                 
                 if (initializeFirebase(config)) {
