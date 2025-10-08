@@ -9,12 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <!-- Firebase Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <!-- Firebase Auth -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <style>
         :root {
             --primary-color: #4b6cb7;
@@ -668,104 +662,15 @@
         .credits-footer a:hover {
             text-decoration: underline;
         }
-
-        /* Login styles */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--dark-bg) 100%);
-        }
-        
-        .login-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 30px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .user-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--primary-color);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-        
-        /* Storage toggle */
-        .storage-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .storage-toggle .form-check {
-            margin: 0;
-        }
-        
-        .storage-status {
-            font-size: 0.8rem;
-            padding: 3px 8px;
-            border-radius: 10px;
-        }
-        
-        .storage-online {
-            background-color: var(--success-color);
-            color: white;
-        }
-        
-        .storage-local {
-            background-color: var(--warning-color);
-            color: black;
-        }
     </style>
 </head>
 <body>
-    <!-- Tela de Login -->
-    <div id="login-page" class="login-container">
-        <div class="login-card">
-            <h2 class="text-center text-gradient mb-4">Sistema de Controle</h2>
-            <form id="login-form">
-                <div class="mb-3">
-                    <label for="login-email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="login-email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="login-password" class="form-label">Senha</label>
-                    <input type="password" class="form-control" id="login-password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="login-role" class="form-label">Tipo de Usuário</label>
-                    <select class="form-select" id="login-role" required>
-                        <option value="user">Usuário</option>
-                        <option value="admin">Administrador</option>
-                    </select>
-                </div>
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Entrar</button>
-                </div>
-            </form>
-            <div class="mt-3 text-center">
-                <small class="text-muted">Sistema desenvolvido por <strong>[Aldemir Garbino]</strong> com auxílio de IA</small>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sistema Principal (inicialmente oculto) -->
-    <div id="app-container" class="app-container" style="display: none;">
+    <div class="app-container">
         <!-- Sidebar de Navegação -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h3 class="mb-1">Sistema de Controle</h3>
                 <p class="mb-0 small opacity-75">Gestão de Movimentação e Estoque</p>
-                <div class="user-badge" id="user-role-badge">Usuário</div>
             </div>
             <div class="sidebar-nav">
                 <ul class="nav flex-column">
@@ -824,16 +729,6 @@
                     <div class="text-muted">
                         <i class="bi bi-calendar3 me-1"></i>
                         <span id="current-date"></span>
-                    </div>
-                </div>
-
-                <div class="storage-toggle">
-                    <span class="text-muted">Armazenamento:</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="storage-toggle">
-                        <label class="form-check-label" for="storage-toggle">
-                            <span id="storage-status" class="storage-status storage-local">Local</span>
-                        </label>
                     </div>
                 </div>
 
@@ -933,16 +828,6 @@
                     </div>
                 </div>
 
-                <div class="storage-toggle">
-                    <span class="text-muted">Armazenamento:</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="storage-toggle-stock">
-                        <label class="form-check-label" for="storage-toggle-stock">
-                            <span id="storage-status-stock" class="storage-status storage-local">Local</span>
-                        </label>
-                    </div>
-                </div>
-
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="row">
@@ -992,16 +877,6 @@
                         <button id="view-history" class="btn btn-outline-secondary me-2">
                             <i class="bi bi-clock-history me-1"></i>Histórico
                         </button>
-                    </div>
-                </div>
-
-                <div class="storage-toggle">
-                    <span class="text-muted">Armazenamento:</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="storage-toggle-report">
-                        <label class="form-check-label" for="storage-toggle-report">
-                            <span id="storage-status-report" class="storage-status storage-local">Local</span>
-                        </label>
                     </div>
                 </div>
 
@@ -1124,16 +999,6 @@
                     </div>
                 </div>
 
-                <div class="storage-toggle">
-                    <span class="text-muted">Armazenamento:</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="storage-toggle-products">
-                        <label class="form-check-label" for="storage-toggle-products">
-                            <span id="storage-status-products" class="storage-status storage-local">Local</span>
-                        </label>
-                    </div>
-                </div>
-
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="row">
@@ -1156,7 +1021,7 @@
                                     <option value="Caixa">Caixa</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 col-12 mb-3 d-flex align-items-end">
+                            <div class="col-md-3 col-sm-12 mb-3 d-flex align-items-end">
                                 <div class="btn-group w-100">
                                     <button id="apply-products-filters" class="btn btn-primary me-2 flex-fill">Filtrar</button>
                                     <button id="reset-products-filters" class="btn btn-outline-secondary flex-fill">Limpar</button>
@@ -1205,17 +1070,7 @@
                     </div>
                 </div>
 
-                <div class="storage-toggle">
-                    <span class="text-muted">Armazenamento:</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="storage-toggle-paletes">
-                        <label class="form-check-label" for="storage-toggle-paletes">
-                            <span id="storage-status-paletes" class="storage-status storage-local">Local</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Filtro de data para o relatório -->
+                <!-- NOVO: Filtro de data para o relatório -->
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0">Filtros do Relatório</h5>
@@ -1295,57 +1150,6 @@
                     <h2 class="text-gradient">Configurações do Sistema</h2>
                 </div>
 
-                <div class="storage-toggle">
-                    <span class="text-muted">Armazenamento:</span>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="storage-toggle-config">
-                        <label class="form-check-label" for="storage-toggle-config">
-                            <span id="storage-status-config" class="storage-status storage-local">Local</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">Configurações do Firebase</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="firebase-config-form">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="firebase-apiKey" class="form-label">API Key</label>
-                                    <input type="text" class="form-control" id="firebase-apiKey" placeholder="Sua chave API do Firebase">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="firebase-authDomain" class="form-label">Auth Domain</label>
-                                    <input type="text" class="form-control" id="firebase-authDomain" placeholder="seu-projeto.firebaseapp.com">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="firebase-projectId" class="form-label">Project ID</label>
-                                    <input type="text" class="form-control" id="firebase-projectId" placeholder="ID do seu projeto">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="firebase-storageBucket" class="form-label">Storage Bucket</label>
-                                    <input type="text" class="form-control" id="firebase-storageBucket" placeholder="seu-projeto.appspot.com">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="firebase-messagingSenderId" class="form-label">Messaging Sender ID</label>
-                                    <input type="text" class="form-control" id="firebase-messagingSenderId" placeholder="Seu sender ID">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="firebase-appId" class="form-label">App ID</label>
-                                    <input type="text" class="form-control" id="firebase-appId" placeholder="Seu App ID">
-                                </div>
-                            </div>
-                            <div class="d-grid">
-                                <button type="button" id="save-firebase-config" class="btn btn-primary">
-                                    <i class="bi bi-cloud-upload me-1"></i>Salvar Configurações do Firebase
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
                 <div class="card">
                     <div class="card-body">
                         <div class="mb-4">
@@ -1390,7 +1194,7 @@
         </div>
     </div>
 
-    <!-- Rodapé com créditos -->
+    <!-- NOVO: Rodapé com créditos -->
     <div class="credits-footer">
         <div class="container">
             <p>Sistema desenvolvido por <strong>[Aldemir Garbino]</strong> com auxílio de IA</p>
@@ -1586,70 +1390,10 @@
         </div>
     </div>
 
-    <!-- Modal para Editar Relatório de Paletes -->
-    <div class="modal fade" id="editPaletesModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Editar Relatório de Paletes</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="edit-paletes-form">
-                        <input type="hidden" id="edit-paletes-id">
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Data</label>
-                                <input type="date" class="form-control" id="edit-paletes-date" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Tipo de Palete</label>
-                                <select class="form-select" id="edit-paletes-type" required>
-                                    <option value="Fracionado">Fracionado</option>
-                                    <option value="Tambor">Tambor</option>
-                                    <option value="IBC 1000L">IBC 1000L</option>
-                                    <option value="Outro">Outro</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Tipo de Movimento</label>
-                                <select class="form-select" id="edit-paletes-movement" required>
-                                    <option value="Entrada">Entrada</option>
-                                    <option value="Saída">Saída</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Quantidade</label>
-                                <input type="number" class="form-control" id="edit-paletes-quantity" min="1" required>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="update-paletes-item">Atualizar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Configuração do Firebase e Sistema de Login
-        let firebaseApp = null;
-        let db = null;
-        let currentUser = null;
-        let userRole = 'user';
-        let useOnlineStorage = false;
-
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            // Verificar se há configuração salva do Firebase
-            const firebaseConfig = getFirebaseConfig();
-            if (firebaseConfig && firebaseConfig.apiKey) {
-                initializeFirebase(firebaseConfig);
-            }
-
             // Configurar data atual
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('input-date').value = today;
@@ -1675,7 +1419,8 @@
             document.getElementById('logout-btn').addEventListener('click', function(e) {
                 e.preventDefault();
                 if (confirm('Tem certeza que deseja sair do sistema?')) {
-                    logout();
+                    alert('Saindo do sistema...');
+                    // Em um sistema real, aqui seria o redirecionamento para a página de login
                 }
             });
             
@@ -1689,180 +1434,9 @@
             
             // Configurar eventos
             setupEventListeners();
-            setupStorageToggle();
-            
-            // Configurar formulário de login
-            document.getElementById('login-form').addEventListener('submit', handleLogin);
         });
-
-        // Sistema de Login
-        async function handleLogin(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const role = document.getElementById('login-role').value;
-            
-            // Simulação de login (em produção, isso seria feito com Firebase Auth)
-            if (email && password) {
-                currentUser = {
-                    email: email,
-                    role: role
-                };
-                userRole = role;
-                
-                // Mostrar sistema principal
-                document.getElementById('login-page').style.display = 'none';
-                document.getElementById('app-container').style.display = 'flex';
-                
-                // Atualizar badge do usuário
-                document.getElementById('user-role-badge').textContent = role === 'admin' ? 'Administrador' : 'Usuário';
-                
-                alert(`Login realizado com sucesso! Bem-vindo, ${email}`);
-            } else {
-                alert('Por favor, preencha todos os campos!');
-            }
-        }
-
-        function logout() {
-            currentUser = null;
-            userRole = 'user';
-            document.getElementById('app-container').style.display = 'none';
-            document.getElementById('login-page').style.display = 'flex';
-            document.getElementById('login-form').reset();
-        }
-
-        // Sistema de Armazenamento Online/Local
-        function setupStorageToggle() {
-            const toggles = [
-                'storage-toggle', 'storage-toggle-stock', 'storage-toggle-report',
-                'storage-toggle-products', 'storage-toggle-paletes', 'storage-toggle-config'
-            ];
-            
-            toggles.forEach(toggleId => {
-                const toggle = document.getElementById(toggleId);
-                if (toggle) {
-                    toggle.addEventListener('change', function() {
-                        useOnlineStorage = this.checked;
-                        updateStorageStatus();
-                        
-                        // Recarregar dados conforme a página atual
-                        const activePage = document.querySelector('.page.active').id;
-                        switch(activePage) {
-                            case 'products-page':
-                                loadProductsData();
-                                break;
-                            case 'stock-report-page':
-                                loadStockReport();
-                                break;
-                            case 'paletes-page':
-                                loadPaletesData();
-                                break;
-                            case 'dashboard-page':
-                                updateDashboard();
-                                break;
-                        }
-                    });
-                }
-            });
-        }
-
-        function updateStorageStatus() {
-            const statusElements = [
-                'storage-status', 'storage-status-stock', 'storage-status-report',
-                'storage-status-products', 'storage-status-paletes', 'storage-status-config'
-            ];
-            
-            statusElements.forEach(elementId => {
-                const element = document.getElementById(elementId);
-                if (element) {
-                    if (useOnlineStorage) {
-                        element.textContent = 'Online';
-                        element.className = 'storage-status storage-online';
-                    } else {
-                        element.textContent = 'Local';
-                        element.className = 'storage-status storage-local';
-                    }
-                }
-            });
-        }
-
-        // Configuração do Firebase
-        function getFirebaseConfig() {
-            return JSON.parse(localStorage.getItem('firebaseConfig') || '{}');
-        }
-
-        function saveFirebaseConfig(config) {
-            localStorage.setItem('firebaseConfig', JSON.stringify(config));
-        }
-
-  function initializeFirebase(config) {
-    try {
-        // Verifica se já existe uma app do Firebase
-        if (firebase.apps.length === 0) {
-            firebaseApp = firebase.initializeApp(config);
-        } else {
-            firebaseApp = firebase.app();
-        }
         
-        db = firebase.firestore();
-        console.log('Firebase inicializado com sucesso');
-        
-        // Testa a conexão
-        testFirebaseConnection();
-        return true;
-    } catch (error) {
-        console.error('Erro ao inicializar Firebase:', error);
-        alert('Erro ao configurar Firebase: ' + error.message);
-        return false;
-    }
-}
-
-// Função para testar a conexão
-async function testFirebaseConnection() {
-    try {
-        await db.collection('test').doc('connection').set({
-            test: true,
-            timestamp: new Date()
-        });
-        console.log('✅ Conexão com Firebase testada com sucesso');
-    } catch (error) {
-        console.error('❌ Erro ao testar conexão Firebase:', error);
-    }
-}
-
-        // Funções de armazenamento online
-        async function saveDataOnline(collection, data) {
-            if (!db || !useOnlineStorage) return false;
-            
-            try {
-                await db.collection(collection).doc('data').set({
-                    data: data,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                return true;
-            } catch (error) {
-                console.error('Erro ao salvar online:', error);
-                return false;
-            }
-        }
-
-        async function loadDataOnline(collection) {
-            if (!db || !useOnlineStorage) return null;
-            
-            try {
-                const doc = await db.collection(collection).doc('data').get();
-                if (doc.exists) {
-                    return doc.data().data;
-                }
-                return null;
-            } catch (error) {
-                console.error('Erro ao carregar online:', error);
-                return null;
-            }
-        }
-
-        // Função para inicializar dados
+        // Função para inicializar dados de exemplo
         function initializeData() {
             // Produtos
             if (!localStorage.getItem('productsData')) {
@@ -1877,6 +1451,39 @@ async function testFirebaseConnection() {
                         Entradas: 50,
                         Saídas: 0,
                         id: 1
+                    },
+                    { 
+                        SKU: "PROD001", 
+                        Produto: "Produto A", 
+                        Tipo: "Tambor", 
+                        Quantidade: 100,
+                        Lote: "LOTE-002",
+                        'Data Fabricação': "2023-01-20",
+                        Entradas: 100,
+                        Saídas: 0,
+                        id: 2
+                    },
+                    { 
+                        SKU: "PROD002", 
+                        Produto: "Produto B", 
+                        Tipo: "Balde", 
+                        Quantidade: 75,
+                        Lote: "LOTE-003",
+                        'Data Fabricação': "2021-10-18",
+                        Entradas: 75,
+                        Saídas: 0,
+                        id: 3
+                    },
+                    { 
+                        SKU: "PROD003", 
+                        Produto: "Produto C", 
+                        Tipo: "Bombona", 
+                        Quantidade: 200,
+                        Lote: "LOTE-004",
+                        'Data Fabricação': "2023-03-10",
+                        Entradas: 200,
+                        Saídas: 0,
+                        id: 4
                     }
                 ];
                 localStorage.setItem('productsData', JSON.stringify(productsData));
@@ -1894,6 +1501,30 @@ async function testFirebaseConnection() {
                         productSKU: 'PROD001',
                         productName: 'Produto A',
                         quantity: 50,
+                        productType: 'Tambor',
+                        batch: 'LOTE-001',
+                        manufacturingDate: '2023-05-15'
+                    },
+                    {
+                        id: 2,
+                        timestamp: new Date().toISOString(),
+                        date: today,
+                        movementType: 'Entrada',
+                        productSKU: 'PROD002',
+                        productName: 'Produto B',
+                        quantity: 75,
+                        productType: 'Balde',
+                        batch: 'LOTE-002',
+                        manufacturingDate: '2023-06-20'
+                    },
+                    {
+                        id: 3,
+                        timestamp: new Date().toISOString(),
+                        date: today,
+                        movementType: 'Saída',
+                        productSKU: 'PROD001',
+                        productName: 'Produto A',
+                        quantity: 25,
                         productType: 'Tambor',
                         batch: 'LOTE-001',
                         manufacturingDate: '2023-05-15'
@@ -1919,9 +1550,17 @@ async function testFirebaseConnection() {
                                 productType: 'Tambor',
                                 batch: 'LOTE-001',
                                 manufacturingDate: '2023-05-15'
+                            },
+                            {
+                                date: today,
+                                movementType: 'Saída',
+                                productName: 'Produto B',
+                                quantity: 25,
+                                productType: 'Balde',
+                                batch: 'LOTE-002',
+                                manufacturingDate: '2023-06-20'
                             }
-                        ],
-                        photos: [] // Array para armazenar fotos
+                        ]
                     }
                 ];
                 localStorage.setItem('reportsHistory', JSON.stringify(reportsHistory));
@@ -1936,14 +1575,16 @@ async function testFirebaseConnection() {
                         date: today,
                         reportNumber: 1,
                         items: [
-                            { type: 'Fracionado', movement: 'Entrada', quantity: 15 }
+                            { type: 'Fracionado', movement: 'Entrada', quantity: 15 },
+                            { type: 'Tambor', movement: 'Saída', quantity: 8 },
+                            { type: 'IBC 1000L', movement: 'Entrada', quantity: 5 }
                         ]
                     }
                 ];
                 localStorage.setItem('paletesData', JSON.stringify(paletesData));
             }
         }
-
+        
         // Função para configurar event listeners
         function setupEventListeners() {
             // Produtos
@@ -1992,7 +1633,7 @@ async function testFirebaseConnection() {
                 loadProductsData();
             });
             
-            // Eventos para filtros de paletes
+            // NOVOS EVENTOS PARA FILTROS DE PALETES
             document.getElementById('apply-paletes-filters').addEventListener('click', function() {
                 loadPaletesData();
             });
@@ -2011,9 +1652,6 @@ async function testFirebaseConnection() {
             document.getElementById('clearHistoryBtn').addEventListener('click', function() {
                 if (confirm('Tem certeza que deseja limpar todo o histórico? Esta ação não pode ser desfeita.')) {
                     localStorage.removeItem('movementHistory');
-                    if (useOnlineStorage) {
-                        saveDataOnline('movementHistory', []);
-                    }
                     loadHistoryData();
                     alert('Histórico limpo com sucesso!');
                 }
@@ -2038,25 +1676,6 @@ async function testFirebaseConnection() {
             // Paletes
             document.getElementById('add-paletes-item').addEventListener('click', addPaletesItem);
             
-            // Configurações do Firebase
-            document.getElementById('save-firebase-config').addEventListener('click', function() {
-                const config = {
-                    apiKey: document.getElementById('AIzaSyDOy0Ylpkkq9GZQLJmmpfkLwCorptjceV4').value,
-                    authDomain: document.getElementById('controlemovimentacao-cbd0d.firebaseapp.com').value,
-                    projectId: document.getElementById('controlemovimentacao-cbd0d').value,
-                    storageBucket: document.getElementById('controlemovimentacao-cbd0d.firebasestorage.app').value,
-                    messagingSenderId: document.getElementById('607751879879').value,
-                    appId: document.getElementById('1:607751879879:web:061ecce071d004315812e2').value
-                };
-                
-                if (initializeFirebase(config)) {
-                    saveFirebaseConfig(config);
-                    alert('Configurações do Firebase salvas com sucesso!');
-                } else {
-                    alert('Erro ao configurar Firebase. Verifique os dados informados.');
-                }
-            });
-            
             // Configurações
             document.getElementById('save-config-btn').addEventListener('click', function() {
                 alert('Configurações salvas com sucesso!');
@@ -2065,7 +1684,7 @@ async function testFirebaseConnection() {
             // Upload de fotos
             document.getElementById('photos').addEventListener('change', handlePhotoUpload);
         }
-
+        
         // Array para armazenar os produtos (para a tela de movimentação)
         let productsList = [];
         
@@ -2122,7 +1741,7 @@ async function testFirebaseConnection() {
                 }
             }
         }
-
+        
         // Função para mostrar página específica
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => {
@@ -2141,36 +1760,13 @@ async function testFirebaseConnection() {
                 loadPaletesData();
             } else if (pageId === 'dashboard-page') {
                 updateDashboard();
-            } else if (pageId === 'config-page') {
-                loadFirebaseConfig();
             }
         }
-
-        // Função para carregar configuração do Firebase
-        function loadFirebaseConfig() {
-            const config = getFirebaseConfig();
-            if (config) {
-                document.getElementById('firebase-apiKey').value = config.apiKey || '';
-                document.getElementById('firebase-authDomain').value = config.authDomain || '';
-                document.getElementById('firebase-projectId').value = config.projectId || '';
-                document.getElementById('firebase-storageBucket').value = config.storageBucket || '';
-                document.getElementById('firebase-messagingSenderId').value = config.messagingSenderId || '';
-                document.getElementById('firebase-appId').value = config.appId || '';
-            }
-        }
-
+        
         // Função para atualizar o dashboard
-        async function updateDashboard() {
-            let productsData, movementHistory;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-                movementHistory = await loadDataOnline('movementHistory') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-                movementHistory = JSON.parse(localStorage.getItem('movementHistory') || '[]');
-            }
-            
+        function updateDashboard() {
+            const productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
+            const movementHistory = JSON.parse(localStorage.getItem('movementHistory') || '[]');
             const today = new Date().toISOString().split('T')[0];
             
             // Total de produtos
@@ -2235,18 +1831,11 @@ async function testFirebaseConnection() {
                 tbody.appendChild(row);
             });
         }
-
+        
         // Função para carregar dados de paletes (ATUALIZADA)
-        async function loadPaletesData() {
-            let paletesData;
-            
-            if (useOnlineStorage) {
-                paletesData = await loadDataOnline('paletesData') || [];
-            } else {
-                paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
-            }
-            
+        function loadPaletesData() {
             const filterDate = document.getElementById('paletes-filter-date').value;
+            const paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
             const container = document.getElementById('paletes-report-container');
             
             container.innerHTML = '';
@@ -2279,14 +1868,7 @@ async function testFirebaseConnection() {
                 header.className = 'report-header';
                 header.innerHTML = `
                     <span>📊 Relatório Diário - ${formatDate(report.date)} - Nº ${report.reportNumber.toString().padStart(6, '0')}</span>
-                    <div>
-                        ${userRole === 'admin' ? `
-                        <button class="btn btn-sm btn-warning edit-paletes-report" data-id="${report.id}" title="Editar relatório">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        ` : ''}
-                        <i class="bi bi-chevron-down"></i>
-                    </div>
+                    <i class="bi bi-chevron-down"></i>
                 `;
                 
                 // Detalhes do relatório
@@ -2302,20 +1884,12 @@ async function testFirebaseConnection() {
                 let totalEntradas = 0;
                 let totalSaidas = 0;
                 
-                report.items.forEach((item, index) => {
+                report.items.forEach(item => {
                     const itemElement = document.createElement('div');
                     itemElement.className = 'report-item';
                     itemElement.innerHTML = `
                         <span>${item.type}</span>
-                        <span>
-                            ${item.movement === 'Entrada' ? 'Entrada' : 'Saída'}: ${item.quantity} paletes
-                            ${userRole === 'admin' ? `
-                            <button class="btn btn-sm btn-outline-warning ms-2 edit-paletes-item" 
-                                    data-report-id="${report.id}" data-item-index="${index}" title="Editar item">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            ` : ''}
-                        </span>
+                        <span>${item.movement === 'Entrada' ? 'Entrada' : 'Saída'}: ${item.quantity} paletes</span>
                     `;
                     details.appendChild(itemElement);
                     
@@ -2337,147 +1911,20 @@ async function testFirebaseConnection() {
                 details.appendChild(totalElement);
                 
                 // Evento para expandir/recolher
-                header.addEventListener('click', function(e) {
-                    if (!e.target.closest('.edit-paletes-report')) {
-                        const isVisible = details.style.display !== 'none';
-                        details.style.display = isVisible ? 'none' : 'block';
-                        this.querySelector('i.bi-chevron-down, i.bi-chevron-up').className = isVisible ? 'bi bi-chevron-down' : 'bi bi-chevron-up';
-                    }
+                header.addEventListener('click', function() {
+                    const isVisible = details.style.display !== 'none';
+                    details.style.display = isVisible ? 'none' : 'block';
+                    this.querySelector('i').className = isVisible ? 'bi bi-chevron-down' : 'bi bi-chevron-up';
                 });
-                
-                // Evento para editar relatório (apenas admin)
-                if (userRole === 'admin') {
-                    header.querySelector('.edit-paletes-report').addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const reportId = this.getAttribute('data-id');
-                        editPaletesReport(reportId);
-                    });
-                }
-                
-                // Eventos para editar itens (apenas admin)
-                if (userRole === 'admin') {
-                    details.querySelectorAll('.edit-paletes-item').forEach(btn => {
-                        btn.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            const reportId = this.getAttribute('data-report-id');
-                            const itemIndex = this.getAttribute('data-item-index');
-                            editPaletesItem(reportId, itemIndex);
-                        });
-                    });
-                }
                 
                 reportElement.appendChild(header);
                 reportElement.appendChild(details);
                 container.appendChild(reportElement);
             });
         }
-
-        // Função para editar relatório de paletes
-        async function editPaletesReport(reportId) {
-            let paletesData;
-            
-            if (useOnlineStorage) {
-                paletesData = await loadDataOnline('paletesData') || [];
-            } else {
-                paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
-            }
-            
-            const report = paletesData.find(r => r.id == reportId);
-            if (!report) return;
-            
-            // Preencher formulário de edição
-            document.getElementById('edit-paletes-date').value = report.date;
-            
-            // Mostrar modal de edição
-            const modal = new bootstrap.Modal(document.getElementById('editPaletesModal'));
-            modal.show();
-            
-            // Configurar evento de atualização
-            document.getElementById('update-paletes-item').onclick = function() {
-                const newDate = document.getElementById('edit-paletes-date').value;
-                
-                if (!newDate) {
-                    alert('Por favor, preencha a data!');
-                    return;
-                }
-                
-                // Atualizar data do relatório
-                report.date = newDate;
-                
-                // Salvar dados
-                if (useOnlineStorage) {
-                    saveDataOnline('paletesData', paletesData);
-                } else {
-                    localStorage.setItem('paletesData', JSON.stringify(paletesData));
-                }
-                
-                // Recarregar dados
-                loadPaletesData();
-                modal.hide();
-                alert('Relatório atualizado com sucesso!');
-            };
-        }
-
-        // Função para editar item de paletes
-        async function editPaletesItem(reportId, itemIndex) {
-            let paletesData;
-            
-            if (useOnlineStorage) {
-                paletesData = await loadDataOnline('paletesData') || [];
-            } else {
-                paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
-            }
-            
-            const report = paletesData.find(r => r.id == reportId);
-            if (!report || !report.items[itemIndex]) return;
-            
-            const item = report.items[itemIndex];
-            
-            // Preencher formulário de edição
-            document.getElementById('edit-paletes-date').value = report.date;
-            document.getElementById('edit-paletes-type').value = item.type;
-            document.getElementById('edit-paletes-movement').value = item.movement;
-            document.getElementById('edit-paletes-quantity').value = item.quantity;
-            document.getElementById('edit-paletes-id').value = reportId;
-            
-            // Mostrar modal de edição
-            const modal = new bootstrap.Modal(document.getElementById('editPaletesModal'));
-            modal.show();
-            
-            // Configurar evento de atualização
-            document.getElementById('update-paletes-item').onclick = function() {
-                const newDate = document.getElementById('edit-paletes-date').value;
-                const newType = document.getElementById('edit-paletes-type').value;
-                const newMovement = document.getElementById('edit-paletes-movement').value;
-                const newQuantity = document.getElementById('edit-paletes-quantity').value;
-                
-                if (!newDate || !newType || !newMovement || !newQuantity) {
-                    alert('Por favor, preencha todos os campos!');
-                    return;
-                }
-                
-                // Atualizar item
-                item.type = newType;
-                item.movement = newMovement;
-                item.quantity = parseInt(newQuantity);
-                report.date = newDate;
-                
-                // Salvar dados
-                if (useOnlineStorage) {
-                    saveDataOnline('paletesData', paletesData);
-                } else {
-                    localStorage.setItem('paletesData', JSON.stringify(paletesData));
-                }
-                
-                // Recarregar dados
-                loadPaletesData();
-                modal.hide();
-                alert('Item atualizado com sucesso!');
-            };
-        }
-
+        
         // Função para adicionar item de paletes
-        async function addPaletesItem() {
+        function addPaletesItem() {
             const date = document.getElementById('paletes-date').value;
             const type = document.getElementById('paletes-type').value;
             const movement = document.getElementById('paletes-movement').value;
@@ -2488,13 +1935,7 @@ async function testFirebaseConnection() {
                 return;
             }
             
-            let paletesData;
-            
-            if (useOnlineStorage) {
-                paletesData = await loadDataOnline('paletesData') || [];
-            } else {
-                paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
-            }
+            let paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
             
             // Verificar se já existe um relatório para esta data
             let existingReport = paletesData.find(r => r.date === date);
@@ -2518,12 +1959,8 @@ async function testFirebaseConnection() {
                 quantity: quantity
             });
             
-            // Salvar dados
-            if (useOnlineStorage) {
-                await saveDataOnline('paletesData', paletesData);
-            } else {
-                localStorage.setItem('paletesData', JSON.stringify(paletesData));
-            }
+            // Salvar no localStorage
+            localStorage.setItem('paletesData', JSON.stringify(paletesData));
             
             // Recarregar a exibição
             loadPaletesData();
@@ -2535,7 +1972,7 @@ async function testFirebaseConnection() {
             
             alert('Movimentação de paletes adicionada com sucesso!');
         }
-
+        
         // Função para obter o próximo número de relatório de paletes
         function getNextPaletesReportNumber() {
             let reportNumber = parseInt(localStorage.getItem('lastPaletesReportNumber') || '0');
@@ -2543,9 +1980,9 @@ async function testFirebaseConnection() {
             localStorage.setItem('lastPaletesReportNumber', reportNumber.toString());
             return reportNumber;
         }
-
+        
         // Função para gerar PDF de paletes (ATUALIZADA)
-        async function generatePaletesPDF() {
+        function generatePaletesPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
@@ -2557,13 +1994,7 @@ async function testFirebaseConnection() {
             
             // Obter dados com filtro aplicado
             const filterDate = document.getElementById('paletes-filter-date').value;
-            let paletesData;
-            
-            if (useOnlineStorage) {
-                paletesData = await loadDataOnline('paletesData') || [];
-            } else {
-                paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
-            }
+            let paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
             
             // Aplicar filtro de data se existir
             if (filterDate) {
@@ -2644,17 +2075,11 @@ async function testFirebaseConnection() {
             doc.save('relatorio_paletes.pdf');
             alert('PDF de movimentação de paletes gerado com sucesso!');
         }
-
+        
         // Função para exportar Excel de paletes (ATUALIZADA)
-        async function generatePaletesExcel() {
+        function generatePaletesExcel() {
             const filterDate = document.getElementById('paletes-filter-date').value;
-            let paletesData;
-            
-            if (useOnlineStorage) {
-                paletesData = await loadDataOnline('paletesData') || [];
-            } else {
-                paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
-            }
+            let paletesData = JSON.parse(localStorage.getItem('paletesData') || '[]');
             
             // Aplicar filtro de data se existir
             if (filterDate) {
@@ -2690,7 +2115,7 @@ async function testFirebaseConnection() {
             
             // Adicionar linha de créditos
             data.push([]);
-            data.push(['Sistema de Movimentação BLUEWAY']);
+            data.push(['Sistema desenvolvido por [Seu Nome] com auxílio de IA']);
             
             // Criar planilha
             const ws = XLSX.utils.aoa_to_sheet(data);
@@ -2701,16 +2126,10 @@ async function testFirebaseConnection() {
             XLSX.writeFile(wb, 'movimentacao_paletes.xlsx');
             alert('Excel de movimentação de paletes exportado com sucesso!');
         }
-
+        
         // Função para exportar produtos para Excel
-        async function exportProductsExcel() {
-            let productsData;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-            }
+        function exportProductsExcel() {
+            const productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
             
             if (productsData.length === 0) {
                 alert('Nenhum produto encontrado!');
@@ -2741,7 +2160,7 @@ async function testFirebaseConnection() {
             
             // Adicionar linha de créditos
             data.push([]);
-            data.push(['Sistema de Movimentação BLUEWAY']);
+            data.push(['Sistema desenvolvido por [Seu Nome] com auxílio de IA']);
             
             // Criar planilha
             const ws = XLSX.utils.aoa_to_sheet(data);
@@ -2752,9 +2171,9 @@ async function testFirebaseConnection() {
             XLSX.writeFile(wb, 'estoque_produtos.xlsx');
             alert('Excel de produtos exportado com sucesso!');
         }
-
+        
         // Função para gerar PDF de estoque
-        async function generateStockPDF() {
+        function generateStockPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
@@ -2765,7 +2184,7 @@ async function testFirebaseConnection() {
             doc.text(`Data de geração: ${new Date().toLocaleDateString('pt-BR')}`, 14, 25);
             
             // Obter dados filtrados
-            const filteredData = await getFilteredStockData();
+            const filteredData = getFilteredStockData();
             
             if (filteredData.length === 0) {
                 doc.text('Nenhum dado encontrado para o filtro aplicado.', 14, 40);
@@ -2803,10 +2222,10 @@ async function testFirebaseConnection() {
             doc.save('relatorio_estoque.pdf');
             alert('Relatório de estoque exportado com sucesso!');
         }
-
+        
         // Função para gerar Excel de estoque
-        async function generateStockExcel() {
-            const filteredData = await getFilteredStockData();
+        function generateStockExcel() {
+            const filteredData = getFilteredStockData();
             
             if (filteredData.length === 0) {
                 alert('Nenhum dado encontrado para o filtro aplicado!');
@@ -2834,7 +2253,7 @@ async function testFirebaseConnection() {
             
             // Adicionar linha de créditos
             data.push([]);
-            data.push(['Sistema de Movimentação BLUEWAY']);
+            data.push(['Sistema desenvolvido por [Seu Nome] com auxílio de IA']);
             
             // Criar planilha
             const ws = XLSX.utils.aoa_to_sheet(data);
@@ -2845,7 +2264,7 @@ async function testFirebaseConnection() {
             XLSX.writeFile(wb, 'relatorio_estoque.xlsx');
             alert('Excel de estoque exportado com sucesso!');
         }
-
+        
         // Função para obter o próximo número de relatório
         function getNextReportNumber() {
             let reportNumber = parseInt(localStorage.getItem('lastReportNumber') || '0');
@@ -2853,20 +2272,14 @@ async function testFirebaseConnection() {
             localStorage.setItem('lastReportNumber', reportNumber.toString());
             return reportNumber;
         }
-
+        
         // Função para carregar produtos para a tela de movimentação
-        async function loadProductsForMovement() {
+        function loadProductsForMovement() {
             const productSelect = document.getElementById('input-product');
             productSelect.innerHTML = '<option value="">Selecione um produto</option>';
             
             // Obter produtos do estoque
-            let productsData;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-            }
+            const productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
             
             // Criar lista única de produtos (agrupando por SKU)
             const uniqueProducts = {};
@@ -2889,7 +2302,7 @@ async function testFirebaseConnection() {
                 productSelect.appendChild(option);
             });
         }
-
+        
         // Função para atualizar detalhes do produto na movimentação
         function updateProductDetails() {
             const productSelect = document.getElementById('input-product');
@@ -2902,9 +2315,9 @@ async function testFirebaseConnection() {
                 typeInput.value = '';
             }
         }
-
+        
         // Função para carregar lotes para o produto selecionado
-        async function loadLotesForProduct() {
+        function loadLotesForProduct() {
             const productSKU = document.getElementById('input-product').value;
             const movementType = document.getElementById('input-movementType').value;
             const batchSelect = document.getElementById('input-batch');
@@ -2918,13 +2331,7 @@ async function testFirebaseConnection() {
             if (!productSKU) return;
             
             // Obter produtos do estoque
-            let productsData;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-            }
+            const productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
             
             if (movementType === 'Entrada') {
                 // Para entrada, permitir novo lote ou lote existente
@@ -3009,9 +2416,9 @@ async function testFirebaseConnection() {
                 }
             });
         }
-
+        
         // Função para adicionar novo produto
-        async function addNewProduct() {
+        function addNewProduct() {
             const sku = document.getElementById('new-product-sku').value;
             const product = document.getElementById('new-product-name').value;
             const type = document.getElementById('new-product-type').value;
@@ -3026,13 +2433,7 @@ async function testFirebaseConnection() {
             }
             
             // Obter produtos existentes
-            let productsData;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-            }
+            let productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
             
             // Verificar se já existe um produto com o mesmo SKU e lote
             const existingProductIndex = productsData.findIndex(p => 
@@ -3058,12 +2459,8 @@ async function testFirebaseConnection() {
                 });
             }
             
-            // Salvar dados
-            if (useOnlineStorage) {
-                await saveDataOnline('productsData', productsData);
-            } else {
-                localStorage.setItem('productsData', JSON.stringify(productsData));
-            }
+            // Salvar no localStorage
+            localStorage.setItem('productsData', JSON.stringify(productsData));
             
             // Fechar modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
@@ -3074,7 +2471,7 @@ async function testFirebaseConnection() {
             
             alert('Produto adicionado com sucesso!');
         }
-
+        
         // Função para abrir modal de adicionar/editar lote
         function openLoteModal(sku, index = null) {
             // Limpar formulário
@@ -3109,9 +2506,9 @@ async function testFirebaseConnection() {
             const modal = new bootstrap.Modal(document.getElementById('loteModal'));
             modal.show();
         }
-
+        
         // Função para salvar lote (adicionar ou editar)
-        async function saveLote() {
+        function saveLote() {
             const sku = document.getElementById('lote-sku').value;
             const index = document.getElementById('lote-index').value;
             const quantity = document.getElementById('lote-quantity').value;
@@ -3125,13 +2522,7 @@ async function testFirebaseConnection() {
             }
             
             // Obter produtos existentes
-            let productsData;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-            }
+            let productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
             
             if (index) {
                 // Modo de edição - atualizar lote existente
@@ -3174,12 +2565,8 @@ async function testFirebaseConnection() {
                 }
             }
             
-            // Salvar dados
-            if (useOnlineStorage) {
-                await saveDataOnline('productsData', productsData);
-            } else {
-                localStorage.setItem('productsData', JSON.stringify(productsData));
-            }
+            // Salvar no localStorage
+            localStorage.setItem('productsData', JSON.stringify(productsData));
             
             // Fechar modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('loteModal'));
@@ -3190,7 +2577,7 @@ async function testFirebaseConnection() {
             
             alert(index ? 'Lote atualizado com sucesso!' : 'Lote adicionado com sucesso!');
         }
-
+        
         // Função para editar produto
         function editProduct(index) {
             // Obter produtos do localStorage
@@ -3213,9 +2600,9 @@ async function testFirebaseConnection() {
                 modal.show();
             }
         }
-
+        
         // Função para atualizar produto
-        async function updateProduct() {
+        function updateProduct() {
             const index = document.getElementById('edit-product-index').value;
             const sku = document.getElementById('edit-product-sku').value;
             const product = document.getElementById('edit-product-name').value;
@@ -3230,14 +2617,8 @@ async function testFirebaseConnection() {
                 return;
             }
             
-            // Obter produtos
-            let productsData;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-            }
+            // Obter produtos do localStorage
+            let productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
             
             if (index >= 0 && index < productsData.length) {
                 // Atualizar produto
@@ -3251,12 +2632,8 @@ async function testFirebaseConnection() {
                     'Data Fabricação': manufacturingDate
                 };
                 
-                // Salvar dados
-                if (useOnlineStorage) {
-                    await saveDataOnline('productsData', productsData);
-                } else {
-                    localStorage.setItem('productsData', JSON.stringify(productsData));
-                }
+                // Salvar no localStorage
+                localStorage.setItem('productsData', JSON.stringify(productsData));
                 
                 // Fechar modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById('editProductModal'));
@@ -3268,29 +2645,19 @@ async function testFirebaseConnection() {
                 alert('Produto atualizado com sucesso!');
             }
         }
-
+        
         // Função para excluir produto
-        async function deleteProduct(index) {
+        function deleteProduct(index) {
             if (confirm('Tem certeza que deseja excluir este produto?')) {
-                // Obter produtos
-                let productsData;
-                
-                if (useOnlineStorage) {
-                    productsData = await loadDataOnline('productsData') || [];
-                } else {
-                    productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-                }
+                // Obter produtos do localStorage
+                let productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
                 
                 if (index >= 0 && index < productsData.length) {
                     // Remover produto
                     productsData.splice(index, 1);
                     
-                    // Salvar dados
-                    if (useOnlineStorage) {
-                        await saveDataOnline('productsData', productsData);
-                    } else {
-                        localStorage.setItem('productsData', JSON.stringify(productsData));
-                    }
+                    // Salvar no localStorage
+                    localStorage.setItem('productsData', JSON.stringify(productsData));
                     
                     // Recarregar tabela
                     loadProductsData();
@@ -3299,7 +2666,7 @@ async function testFirebaseConnection() {
                 }
             }
         }
-
+        
         // Função para adicionar item à tabela (tela de movimentação)
         function addItemToTable() {
             // Obter valores dos campos
@@ -3364,21 +2731,14 @@ async function testFirebaseConnection() {
             // Mostrar mensagem de sucesso
             alert('Produto adicionado à tabela!');
         }
-
+        
         // Função para obter quantidade disponível de um lote
-        async function getAvailableQuantity(productSKU, batch) {
-            let productsData;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-            }
-            
+        function getAvailableQuantity(productSKU, batch) {
+            const productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
             const lotes = productsData.filter(p => p.SKU === productSKU && p.Lote === batch && p.Quantidade > 0);
             return lotes.reduce((total, p) => total + p.Quantidade, 0);
         }
-
+        
         function updateProductsTable() {
             const tableBody = document.getElementById('products-table-body');
             const tableContainer = document.getElementById('products-table-container');
@@ -3427,7 +2787,7 @@ async function testFirebaseConnection() {
             
             updateSummary();
         }
-
+        
         function updateSummary() {
             let totalItems = productsList.length;
             let totalQuantity = 0;
@@ -3461,9 +2821,9 @@ async function testFirebaseConnection() {
                 `;
             }
         }
-
-        // Função para gerar PDF e salvar relatório (ATUALIZADA - com fotos)
-        async function generatePDF() {
+        
+        // Função para gerar PDF e salvar relatório
+        function generatePDF() {
             if (productsList.length === 0) {
                 alert('Adicione pelo menos um produto à tabela antes de gerar o PDF!');
                 return;
@@ -3529,68 +2889,44 @@ async function testFirebaseConnection() {
             const finalY = doc.lastAutoTable.finalY + 20;
             doc.setFontSize(10);
             doc.setTextColor(100);
-            doc.text('Sistema de Movimentação BLUEWAY', 14, finalY);
+            doc.text('Sistema desenvolvido por [Seu Nome] com auxílio de IA', 14, finalY);
             
             // Salvar o PDF
             const fileName = `relatorio_movimentacao_${reportNumber}_${reportDate}.pdf`;
             doc.save(fileName);
             
-            // Salvar relatório no histórico (com fotos)
-            await saveReportToHistory(reportNumber, reportDate);
+            // Salvar relatório no histórico
+            saveReportToHistory(reportNumber, reportDate);
             
             // Atualizar estoque com os produtos movimentados
-            await updateStockFromMovement();
+            updateStockFromMovement();
             
             alert(`PDF gerado com sucesso! Relatório #${reportNumber} salvo.`);
         }
-
-        // Função para salvar relatório no histórico (ATUALIZADA - com fotos)
-        async function saveReportToHistory(reportNumber, reportDate) {
-            let reportsHistory;
-            
-            if (useOnlineStorage) {
-                reportsHistory = await loadDataOnline('reportsHistory') || [];
-            } else {
-                reportsHistory = JSON.parse(localStorage.getItem('reportsHistory') || '[]');
-            }
+        
+        // Função para salvar relatório no histórico
+        function saveReportToHistory(reportNumber, reportDate) {
+            let reportsHistory = JSON.parse(localStorage.getItem('reportsHistory') || '[]');
             
             const report = {
                 reportNumber: reportNumber,
                 date: reportDate,
                 timestamp: new Date().toISOString(),
-                items: [...productsList], // Copia os itens do relatório
-                photos: [...uploadedPhotos] // Salva as fotos
+                items: [...productsList] // Copia os itens do relatório
             };
             
             reportsHistory.push(report);
-            
-            // Salvar dados
-            if (useOnlineStorage) {
-                await saveDataOnline('reportsHistory', reportsHistory);
-            } else {
-                localStorage.setItem('reportsHistory', JSON.stringify(reportsHistory));
-            }
-            
-            // Limpar fotos após salvar
-            uploadedPhotos = [];
-            document.getElementById('photo-previews').innerHTML = '';
-            document.getElementById('photos').value = '';
+            localStorage.setItem('reportsHistory', JSON.stringify(reportsHistory));
         }
-
+        
         // Função para carregar dados dos produtos (com agrupamento)
-        async function loadProductsData() {
+        function loadProductsData() {
             const skuFilter = document.getElementById('products-filter-sku').value;
             const productFilter = document.getElementById('products-filter-name').value;
             const typeFilter = document.getElementById('products-filter-type').value;
             
-            // Obter dados
-            let productsData;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-            }
+            // Obter dados do localStorage
+            let productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
             
             // Se não houver dados, usar dados de exemplo
             if (productsData.length === 0) {
@@ -3605,13 +2941,42 @@ async function testFirebaseConnection() {
                         Entradas: 50,
                         Saídas: 0,
                         id: 1
+                    },
+                    { 
+                        SKU: "PROD001", 
+                        Produto: "Produto A", 
+                        Tipo: "Tambor", 
+                        Quantidade: 100,
+                        Lote: "LOTE-002",
+                        'Data Fabricação': "2023-01-20",
+                        Entradas: 100,
+                        Saídas: 0,
+                        id: 2
+                    },
+                    { 
+                        SKU: "PROD002", 
+                        Produto: "Produto B", 
+                        Tipo: "Balde", 
+                        Quantidade: 75,
+                        Lote: "LOTE-003",
+                        'Data Fabricação': "2021-10-18",
+                        Entradas: 75,
+                        Saídas: 0,
+                        id: 3
+                    },
+                    { 
+                        SKU: "PROD003", 
+                        Produto: "Produto C", 
+                        Tipo: "Bombona", 
+                        Quantidade: 200,
+                        Lote: "LOTE-004",
+                        'Data Fabricação': "2023-03-10",
+                        Entradas: 200,
+                        Saídas: 0,
+                        id: 4
                     }
                 ];
-                if (useOnlineStorage) {
-                    await saveDataOnline('productsData', productsData);
-                } else {
-                    localStorage.setItem('productsData', JSON.stringify(productsData));
-                }
+                localStorage.setItem('productsData', JSON.stringify(productsData));
             }
             
             // Filtrar dados
@@ -3761,7 +3126,7 @@ async function testFirebaseConnection() {
                 }
             });
         }
-
+        
         // Função para expandir/recolher detalhes do produto
         function toggleProductDetails(sku) {
             // Alternar estado de expansão no localStorage
@@ -3771,19 +3136,13 @@ async function testFirebaseConnection() {
             // Recarregar a tabela
             loadProductsData();
         }
-
-        // Função para carregar relatório de estoque (ATUALIZADA - com fotos)
-        async function loadStockReport() {
+        
+        // Função para carregar relatório de estoque
+        function loadStockReport() {
             const dateFilter = document.getElementById('stock-filter-date').value;
             
             // Obter relatórios do histórico
-            let reportsHistory;
-            
-            if (useOnlineStorage) {
-                reportsHistory = await loadDataOnline('reportsHistory') || [];
-            } else {
-                reportsHistory = JSON.parse(localStorage.getItem('reportsHistory') || '[]');
-            }
+            let reportsHistory = JSON.parse(localStorage.getItem('reportsHistory') || '[]');
             
             // Se não houver dados, usar dados de exemplo
             if (reportsHistory.length === 0) {
@@ -3802,16 +3161,20 @@ async function testFirebaseConnection() {
                                 productType: 'Tambor',
                                 batch: 'LOTE-001',
                                 manufacturingDate: '2023-05-15'
+                            },
+                            {
+                                date: today,
+                                movementType: 'Saída',
+                                productName: 'Produto B',
+                                quantity: 25,
+                                productType: 'Balde',
+                                batch: 'LOTE-002',
+                                manufacturingDate: '2023-06-20'
                             }
-                        ],
-                        photos: []
+                        ]
                     }
                 ];
-                if (useOnlineStorage) {
-                    await saveDataOnline('reportsHistory', reportsHistory);
-                } else {
-                    localStorage.setItem('reportsHistory', JSON.stringify(reportsHistory));
-                }
+                localStorage.setItem('reportsHistory', JSON.stringify(reportsHistory));
             }
             
             // Filtrar por data se fornecida
@@ -3860,9 +3223,6 @@ async function testFirebaseConnection() {
                         <button class="btn btn-sm btn-outline-primary toggle-loading-details" data-report="${report.reportNumber}" title="Expandir/Recolher">
                             <i class="bi bi-plus"></i>
                         </button>
-                        ${report.photos && report.photos.length > 0 ? 
-                          `<span class="badge bg-info ms-2" title="${report.photos.length} foto(s)"><i class="bi bi-image"></i> ${report.photos.length}</span>` : 
-                          ''}
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -3894,30 +3254,12 @@ async function testFirebaseConnection() {
                         tbody.appendChild(detailRow);
                     });
                     
-                    // Mostrar fotos se existirem
-                    if (report.photos && report.photos.length > 0) {
-                        const photosRow = document.createElement('tr');
-                        photosRow.className = 'loading-details';
-                        photosRow.setAttribute('data-report', report.reportNumber);
-                        photosRow.innerHTML = `
-                            <td class="batch-details" colspan="5">
-                                <strong>Fotos do Relatório:</strong>
-                                <div class="photo-preview-container mt-2">
-                                    ${report.photos.map(photo => 
-                                        `<img src="${photo.data}" class="photo-preview" alt="Foto do relatório">`
-                                    ).join('')}
-                                </div>
-                            </td>
-                        `;
-                        tbody.appendChild(photosRow);
-                    }
-                    
                     // Atualizar ícone para menos
                     row.querySelector('.toggle-loading-details i').className = 'bi bi-dash';
                 }
             });
         }
-
+        
         // Função para expandir/recolher detalhes do relatório
         function toggleReportDetails(reportNumber) {
             // Alternar estado de expansão no localStorage
@@ -3927,19 +3269,13 @@ async function testFirebaseConnection() {
             // Recarregar a tabela
             loadStockReport();
         }
-
+        
         // Função para obter dados filtrados do estoque
-        async function getFilteredStockData() {
+        function getFilteredStockData() {
             const dateFilter = document.getElementById('stock-filter-date').value;
             
             // Obter dados do histórico de movimentações
-            let movementHistory;
-            
-            if (useOnlineStorage) {
-                movementHistory = await loadDataOnline('movementHistory') || [];
-            } else {
-                movementHistory = JSON.parse(localStorage.getItem('movementHistory') || '[]');
-            }
+            let movementHistory = JSON.parse(localStorage.getItem('movementHistory') || '[]');
             
             // Se não houver dados, usar dados de exemplo
             if (movementHistory.length === 0) {
@@ -3956,13 +3292,33 @@ async function testFirebaseConnection() {
                         productType: 'Tambor',
                         batch: 'LOTE-001',
                         manufacturingDate: '2023-05-15'
+                    },
+                    {
+                        id: 2,
+                        timestamp: new Date().toISOString(),
+                        date: today,
+                        movementType: 'Entrada',
+                        productSKU: 'PROD002',
+                        productName: 'Produto B',
+                        quantity: 75,
+                        productType: 'Balde',
+                        batch: 'LOTE-002',
+                        manufacturingDate: '2023-06-20'
+                    },
+                    {
+                        id: 3,
+                        timestamp: new Date().toISOString(),
+                        date: today,
+                        movementType: 'Saída',
+                        productSKU: 'PROD001',
+                        productName: 'Produto A',
+                        quantity: 25,
+                        productType: 'Tambor',
+                        batch: 'LOTE-001',
+                        manufacturingDate: '2023-05-15'
                     }
                 ];
-                if (useOnlineStorage) {
-                    await saveDataOnline('movementHistory', movementHistory);
-                } else {
-                    localStorage.setItem('movementHistory', JSON.stringify(movementHistory));
-                }
+                localStorage.setItem('movementHistory', JSON.stringify(movementHistory));
             }
             
             // Filtrar por data se fornecida
@@ -3972,17 +3328,10 @@ async function testFirebaseConnection() {
             
             return movementHistory;
         }
-
+        
         // Função para carregar dados do histórico
-        async function loadHistoryData() {
-            let historyData;
-            
-            if (useOnlineStorage) {
-                historyData = await loadDataOnline('movementHistory') || [];
-            } else {
-                historyData = JSON.parse(localStorage.getItem('movementHistory') || '[]');
-            }
-            
+        function loadHistoryData() {
+            const historyData = JSON.parse(localStorage.getItem('movementHistory') || '[]');
             const tbody = document.getElementById('historyTableBody');
             
             tbody.innerHTML = '';
@@ -4008,7 +3357,7 @@ async function testFirebaseConnection() {
                 tbody.appendChild(row);
             });
         }
-
+        
         // Função para filtrar histórico
         function filterHistory(searchTerm) {
             const rows = document.getElementById('historyTableBody').querySelectorAll('tr');
@@ -4023,17 +3372,11 @@ async function testFirebaseConnection() {
                 }
             });
         }
-
+        
         // Função para atualizar o estoque com base na movimentação (FIFO)
-        async function updateStockFromMovement() {
+        function updateStockFromMovement() {
             // Obter produtos do estoque
-            let productsData;
-            
-            if (useOnlineStorage) {
-                productsData = await loadDataOnline('productsData') || [];
-            } else {
-                productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
-            }
+            let productsData = JSON.parse(localStorage.getItem('productsData') || '[]');
             
             // Para cada produto na movimentação, atualizar o estoque
             productsList.forEach(movement => {
@@ -4137,12 +3480,8 @@ async function testFirebaseConnection() {
             // Remover produtos com quantidade zero
             productsData = productsData.filter(p => p.Quantidade > 0);
             
-            // Salvar dados
-            if (useOnlineStorage) {
-                await saveDataOnline('productsData', productsData);
-            } else {
-                localStorage.setItem('productsData', JSON.stringify(productsData));
-            }
+            // Salvar no localStorage
+            localStorage.setItem('productsData', JSON.stringify(productsData));
             
             // Limpar lista de produtos da movimentação
             productsList = [];
@@ -4158,16 +3497,10 @@ async function testFirebaseConnection() {
                 loadStockReport();
             }
         }
-
+        
         // Função para salvar movimentação no histórico
-        async function saveToMovementHistory(movement, quantidadeProcessada) {
-            let movementHistory;
-            
-            if (useOnlineStorage) {
-                movementHistory = await loadDataOnline('movementHistory') || [];
-            } else {
-                movementHistory = JSON.parse(localStorage.getItem('movementHistory') || '[]');
-            }
+        function saveToMovementHistory(movement, quantidadeProcessada) {
+            let movementHistory = JSON.parse(localStorage.getItem('movementHistory') || '[]');
             
             // Adicionar ID único e timestamp
             movementHistory.push({
@@ -4178,14 +3511,9 @@ async function testFirebaseConnection() {
                 remainingQuantity: movement.remainingQuantity || 0
             });
             
-            // Salvar dados
-            if (useOnlineStorage) {
-                await saveDataOnline('movementHistory', movementHistory);
-            } else {
-                localStorage.setItem('movementHistory', JSON.stringify(movementHistory));
-            }
+            localStorage.setItem('movementHistory', JSON.stringify(movementHistory));
         }
-
+        
         // Função para calcular a data de vencimento (4 anos após a fabricação)
         function calculateExpiryDate(manufacturingDate) {
             if (!manufacturingDate) return 'N/A';
@@ -4194,7 +3522,7 @@ async function testFirebaseConnection() {
             date.setFullYear(date.getFullYear() + 4);
             return date.toISOString().split('T')[0];
         }
-
+        
         // Função para verificar o status do produto
         function checkProductStatus(expiryDate) {
             if (!expiryDate || expiryDate === 'N/A') {
@@ -4214,7 +3542,7 @@ async function testFirebaseConnection() {
                 return { status: "Dentro do Prazo", class: "status-valid" };
             }
         }
-
+        
         // Função para formatar data no formato brasileiro
         function formatDate(dateString) {
             if (!dateString || dateString === 'N/A') return 'N/A';
