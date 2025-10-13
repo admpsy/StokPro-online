@@ -749,6 +749,73 @@
             justify-content: space-between;
             align-items: center;
         }
+// ============ ATUALIZAR O CSS ============
+
+// ADICIONE ESTE CSS NO STYLE EXISTENTE:
+
+<style>
+/* Estilos para os novos modais */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, var(--card-bg) 0%, #2a2a2a 100%);
+}
+
+.document-item {
+    background: rgba(255,255,255,0.05);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border-color);
+}
+
+.document-item:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.775rem;
+}
+
+/* Melhorar a visualização de tabelas nos modais */
+.modal-table {
+    background: transparent;
+}
+
+.modal-table th {
+    background: rgba(255,255,255,0.1);
+    border: none;
+}
+
+.modal-table td {
+    border: none;
+    background: transparent;
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Animações para modais */
+.modal.fade .modal-dialog {
+    transform: translate(0, -50px);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: translate(0, 0);
+}
+</style>
+
+        
     </style>
 </head>
 <body>
@@ -4100,71 +4167,6 @@ function loadSegregatedProductsData() {
     });
 }
 
-// ============ ATUALIZAR O CSS ============
-
-// ADICIONE ESTE CSS NO STYLE EXISTENTE:
-
-<style>
-/* Estilos para os novos modais */
-.modal-backdrop {
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-.modal-content {
-    background: linear-gradient(135deg, var(--card-bg) 0%, #2a2a2a 100%);
-}
-
-.document-item {
-    background: rgba(255,255,255,0.05);
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid var(--border-color);
-}
-
-.document-item:hover {
-    background: rgba(255,255,255,0.08);
-}
-
-.btn-group-sm > .btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.775rem;
-}
-
-/* Melhorar a visualização de tabelas nos modais */
-.modal-table {
-    background: transparent;
-}
-
-.modal-table th {
-    background: rgba(255,255,255,0.1);
-    border: none;
-}
-
-.modal-table td {
-    border: none;
-    background: transparent;
-}
-
-/* Loading states */
-.loading {
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-/* Animações para modais */
-.modal.fade .modal-dialog {
-    transform: translate(0, -50px);
-    transition: transform 0.3s ease-out;
-}
-
-.modal.show .modal-dialog {
-    transform: translate(0, 0);
-}
-</style>
     </script>
 </body>
 </html>
